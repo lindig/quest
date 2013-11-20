@@ -1,0 +1,50 @@
+
+\section{Pseudo Random-Number Generator}
+
+This module implements a pseudo random-number generator for integers.
+Unlike regular such generators, its internal state can be observed and
+reset.
+
+<<prg.mli>>=
+val init:   int  -> unit            (* initialze generator with seed *)
+val int:    int  -> int             (* random in in range 0,..,n-1   *)
+@
+
+The generator's state may be observed and reset to a previously observed
+state. In principle in would be better to make the state abstract but we
+also want to emit and read back the state. This forves us to use some
+basic type or provide read and write functions. For now, I'll keep
+things simple.
+
+<<prg.mli>>=
+type state = int                         
+val state:  unit  -> state                   (* observe state *)
+val reset:  state -> unit
+@
+
+\subsection{Implementation}
+
+We provide a function [[mk]] that takes a seed and returns a generator.
+The [[int]] function is generated from the seed [[12345]].
+
+In the [[step]] function we don't have to worry about overflows because
+we only need the 30 least significant bits; in Objective Caml an [[int]]
+has 31 bits, thus we are effectively computing:
+
+$$s_{i+1} = (s_i \times 22695477 +1) \bmod 2^{31}$$ 
+
+<<prg.ml>>=
+type state = int
+
+let rec apply n f x = if n <= 1 then f x else apply (n-1) f (f x) 
+let step x          = x * 22695477 + 1 
+let s               = ref 0     (* never used with this value *)
+let state ()        = !s
+let reset x         = s := x
+let init            = reset
+
+let int n =
+    ( s := step !s
+    ; ((!s lsr 16) land 16383) mod n
+    )
+@    

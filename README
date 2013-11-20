@@ -1,0 +1,141 @@
+
+            $Id: README 18 2007-03-27 11:39:50Z lindig $
+
+            Quest - an extensible test-code generator for C
+
+This directory contains the source code for Quest, a test-code generator
+that emits C code. When compiled and run, the code checks the
+correctness of function calls, especially for complex values.
+Therefore, the main audience of Quest are compiler developers.  
+
+                http://code.google.com/p/quest-tester/
+
+Quest generates function calls that almost never occur in code from real
+projects and thus helps to uncover bugs that are hard to find
+otherwise. Function calls are generated in a pseudo-random fashion and
+don't require any kind of specification---which makes Quest easy to use.
+To detect bugs in a compiler's function-call implementation the
+generated code is compiled and run. Bugs manifest themselves in error
+messages emitted by the generated code.
+
+Test code generation is type-driven: starting from the types for
+parameters and return values a test case is constructed. These types are
+generated randomly by generators. A user may use any of the predefined
+generators or specify her own using the built-in scripting language Lua.
+A generator, for example, may produce only double precision floats and
+long integers. The specification of a generator takes about 30 lines of
+Lua code.
+
+Other features:
+
+- Quest pretty prints C code to keep it readable.
+
+- Quest can split test cases into two files such that they may be
+  compiled by different compilers to check their interoperability.
+
+- Neither Quest itself, nor the generated code requires any special
+  run-time libraries or configuration files. 
+
+- Quest is developed on Debian Linux/x86 and Mach OS X but contains no
+  system-specific source code. However, the build process needs to be
+  adapted for other systems.
+
+INSTALLATION 
+
+Quest is distributed as a Debian GNU/Linux package for x86. To install it,
+obtain the package quest-yyyymmdd_x.deb and execute as root:
+
+    dpkg -i quest-yyyymmdd_x.deb
+
+
+INSTALLATION FROM SOURCE CODE
+
+If you want to compile Quest from source code, you need the following
+tools. 
+
+    + Objective Caml 3.07 or better (tested up to OCaml 3.10 beta)
+    + GNU Make
+    + Perl, together with its POD tools (for documentation)
+    + standard Unix tools like sed(1), sh(1)
+    
+The source code is a literate program in the NoWEB system. However, for
+just compiling and installing Quest you don't need it: the supplied
+nofake tool will do. Only if you want to work seriously on Quest's
+source code you should install NoWEB (from the Debian package nowebm).
+
+To compile Quest, run ./configure from this directory and then make:
+
+    ./configure
+    make
+    make install
+
+The main development platforms are Debian x86 Linux and MacOS X 10.3. 
+
+DOCUMENTATION
+
+- The manual page quest(1) in doc/ explains Quest in detail. Use nroff
+  to format it for viewing before installation:
+
+    nroff -man doc/quest.1 | less
+
+  The manual also contains the copyright notice and the open-source 
+  license for Quest.
+
+- If you have a Quest binary you can view the manual page also with
+    
+    quest -man
+
+  which emits it to stdout. A short summary of options is available
+  with:
+   
+    quest -help
+
+- The Lua 2.5 reference manual in doc/ introduces the Lua scripting
+  language. It is only required to define new generators beyond the
+  existing ones.
+
+- There are two papers about Quest:
+
+    + Christian Lindig. Random  Testing of C Calling Conventions. In
+      Jong Deok Choi and Raimondas Lencevicius, editors, Sixth
+      Internation Symposium on  Automated and Analysis-Driven
+      Debugging", ACM Press, Monterey, CA,  USA, September 2005. 
+
+      http://www.st.cs.uni-sb.de/~lindig/papers/quest/quest.pdf
+
+    + Christian Lindig:  Test-Generator entdeckt Compilerfehler, 
+      iX 9/05 (iX is a German IT journal). Please send me mail for a
+      copy. 
+     
+      http://www.heise.de/ix/
+
+ROADMAP
+
+    src/	main source code
+    share/      Lua source code, define test-code generators
+    lua-ml/     Lua interpreter
+    tools/	scripts for various purposes
+    doc/	user-level documentation	
+    config/     macros
+    debian/     files for building a Debian package
+    bugs/       compielr bugs found with quest
+
+
+COPYRIGHT
+
+The source code and the binaries are distributed under a BSD-style
+license. See the manual page in the doc/ directory and the file
+debian/copyright.
+
+
+BUGS
+
+Please send bug reports, patches and suggestions to Christian Lindig
+<lindig@cs.uni-sb.de>
+
+
+AUTHOR
+
+Christian Lindig <lindig@gmail.com>
+http://www.st.cs.uni-sb.de/~lindig/
+

@@ -1,0 +1,106 @@
+# This is a shell archive.  Save it in a file, remove anything before
+# this line, and then unpack it by entering "sh file".  Note, it may
+# create directories; files and directories will be owned by you and
+# have default permissions.
+#
+# This archive contains:
+#
+#	quest-bug-readme.txt
+#	quest-bug-main.c
+#	quest-bug-callee.c
+#
+echo x - quest-bug-readme.txt
+sed 's/^X//' >quest-bug-readme.txt << 'END-of-quest-bug-readme.txt'
+X	gcc -O2 -c quest-bug-callee.c 
+X	cc -O2 -c quest-bug-main.c 
+X	cc -o foo quest-bug-callee.o quest-bug-main.o 
+X	./foo
+X
+X	ssertion failed: EX, file quest-bug-callee.c, line 36
+X	Abort
+X
+XReading specs from /usr/freeware/lib/gcc-lib/mips-sgi-irix6.5/3.3/specs
+XConfigured with: ../configure --prefix=/usr/freeware --enable-version-specific-runtime-libs --disable-shared --enable-threads --enable-haifa --enable-libgcj --disable-c-mbchar
+XThread model: single
+Xgcc version 3.3
+X
+X
+XMIPSpro Compilers: Version 7.3.1.3m
+X
+X
+END-of-quest-bug-readme.txt
+echo x - quest-bug-main.c
+sed 's/^X//' >quest-bug-main.c << 'END-of-quest-bug-main.c'
+X/* $Id: gcc-3.3+cc-7.3.1.1.shar 3 2006-04-29 13:17:19Z lindig $ */
+X/* ./quest -2 -test ansi -n 1 -seed 734037414 -o /tmp/quest-bug */
+X
+X#include <assert.h>
+X
+Xextern int printf (char *, ...);
+Xint errors = 0;
+Xstatic void failed( int line )
+X{ printf ("failed in %s: %d\n", __FILE__, line); errors++; }
+Xunsigned char av1 = '\x60';
+Xlong int *hv1[1] = { (long int *) 472943840U };
+Xlong long int iv1 = 1176577985L;
+Xstruct bt1 { double fv1; float gv1; } *jv1 = (struct bt1 *) 2098921619U;
+Xunion at1 { float bv1; } cv1 = { 71952.003467 };
+Xdouble dv1 = 2474.725041;
+Xlong int ev1 = 1841014437L;
+Xextern
+Xunsigned char callee_af1 (long int *[1], long long int, struct bt1 *, ...);
+Xstatic void caller_bf1(  )
+X{
+X    unsigned char nv1;
+X    /* seed: 734037414 */
+X    nv1 = callee_af1 (hv1, iv1, jv1, cv1, dv1, ev1);
+X    assert (av1 ==  nv1);
+X}
+Xint main( int argc, char **argv ) { caller_bf1 (); return errors; }
+END-of-quest-bug-main.c
+echo x - quest-bug-callee.c
+sed 's/^X//' >quest-bug-callee.c << 'END-of-quest-bug-callee.c'
+X/* $Id: gcc-3.3+cc-7.3.1.1.shar 3 2006-04-29 13:17:19Z lindig $ */
+X
+X#include <stdarg.h>
+X
+X#include <assert.h>
+X
+Xextern int printf (char *, ...);
+Xextern int errors;
+Xstatic void failed( int line )
+X{ printf ("failed in %s: %d\n", __FILE__, line); errors++; }
+Xextern unsigned char av1;
+Xextern long int *hv1[1];
+Xextern long long int iv1;
+Xextern struct bt1 { double fv1; float gv1; } *jv1;
+Xextern union at1 { float bv1; } cv1;
+Xextern double dv1;
+Xextern long int ev1;
+Xunsigned char
+Xcallee_af1( long int *ap1[1], long long int bp1, struct bt1 *cp1, ... )
+X{
+X    va_list ap;
+X    typedef union at1 ad1;
+X    typedef double bd1;
+X    typedef long int cd1;
+X    ad1 kv1;
+X    bd1 lv1;
+X    cd1 mv1;
+X    /* seed: 734037414 */
+X    va_start (ap, cp1);
+X    assert (hv1[0] ==  ap1[0]);
+X    assert (iv1 ==  bp1);
+X    assert (jv1 ==  cp1);
+X    kv1 = va_arg (ap, ad1);
+X    lv1 = va_arg (ap, bd1);
+X    mv1 = va_arg (ap, cd1);
+X    assert (cv1.bv1 ==  kv1.bv1);
+X    assert (dv1 ==  lv1);
+X    assert (ev1 ==  mv1);
+X    va_end (ap);
+X    return av1;
+X}
+END-of-quest-bug-callee.c
+exit
+

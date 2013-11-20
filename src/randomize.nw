@@ -1,0 +1,157 @@
+Random
+
+\section{Randomized Data Structures}
+
+This module provides generators to build data structures in a random, yet
+controllable way. The design and most of the implementation is taken
+from Claessen and Hughes' tool QuickCheck [\emph{QuickCheck: A
+Lightweight Tool for Random Testing of Haskell Programs}, ICFP, 2000].
+
+A generator [['a t]] can be [[run]]; it takes a size [[int]] and
+produces a value of type [['a]]. 
+
+
+<<randomize.mli>>=
+type size = int
+type 'a t  
+val run:        'a t -> size -> 'a
+@
+
+\paragraph{Monads} A generator is a \emph{monad} and hence comes with
+two composition functions: [[return]] and bind (written as [[>>=]]). 
+<<randomize.mli>>=
+val return:     'a  -> 'a t
+val (>>=):      'a t -> ('a -> 'b t) -> 'b t
+val bind:       'a t -> ('a -> 'b t) -> 'b t
+@
+
+The following two functions deal with the size of a generated value:
+[[size]] provides access to the desired size (passed to [[run]]
+initially); [[smaller]] takes a monad and produces one that creates a
+values of size $n-1$ for an actual size of $n$. Function [[smaller]] is
+essential for recursive generators to ensure termination.
+
+<<randomize.mli>>=
+val size:       int t
+val smaller:    'a t -> 'a t
+val iszero:     bool t
+@
+
+The two [[lift]] functions help to turn regular functions into monadic
+functions.
+
+<<randomize.mli>>=
+val lift:       ('a -> 'b) -> ('a t -> 'b t)
+val lift2:      ('a -> 'b -> 'c) -> ('a t -> 'b t -> 'c t)
+@
+
+For example, to create a generator for integer pairs one could use
+[[lift2]] to lift a pair-building function into the realm of generators.
+
+<<example.ml>>=
+let pair = lift2 (fun x y -> (x,y)) (int 1000) (int 1000)    
+@
+
+Use [[>>=]] and [[return]] to access a value produced by a monad; here
+is an alternative implementation without [[lift2]]. The parameters [[i]]
+and [[j]] bind the integers produced by [[int]]; [[return]] returns the
+constructed value in a monad.
+
+<<example.ml>>=
+let pair = 
+     int 1000 >>= fun i ->
+     int 1000 >>= fun j ->
+     return (i,j)
+@
+    
+
+\paragraph{Primitive Generators} The [[int n]] generator produces an
+integer in the range $0,\dots,n-1$; the [[choose l h]] operator takes a
+lower [[l]] and an upper bound [[h]] and produces an integer from the
+rane $l,\dots,h$.  A generator [[elements xs]] produces an element from
+the list [[xs]].
+
+<<randomize.mli>>=
+val int:        int -> int t                (* 0 .. n-1, requires n > 0 *)
+val flip:       bool t
+val choose:     int -> int -> int t         (* lo .. hi *)
+val elements:   'a list -> 'a t
+@
+
+\paragraph{Combinators} Combinators combine simple generators to complex
+generators. The [[list n g]] generator produces lists of length [[n]]
+using [[g]] to produce individual elements.
+
+The [[oneof]] combinator picks a generator from a list with equal
+probability. The [[freq]] combinator accepts weights for each generator
+in a list; the [[freq]] combinator picks generators according to their
+relative weight.
+
+<<randomize.mli>>=
+val list:       int t -> 'a t -> 'a list t
+val oneof:      ('a t) list -> 'a t
+val freq:       (int * 'a t) list -> 'a t
+val concat:     ('a list) t list -> 'a list t
+@
+
+\implementation{Implementation}
+
+The pseudo-random generator must be initialized with a seed. This
+happens at startup in module [[Main]].
+
+<<randomize.ml>>=
+type size = int
+type 'a t = int -> 'a
+
+let (@@) f x        = f x
+let return a        = fun size -> a
+let (>>=) m k       = fun size -> let m' = k (m size) in m' size
+let bind            = (>>=)
+let lift  f m       = m  >>= fun a -> return (f a)
+let lift2 f m1 m2   = m1 >>= fun a -> m2 >>= fun b -> return (f a b)
+let run m s         = m s
+let random_int n    = assert (n>=1); Random.int n
+let random_int n    = assert (n>=1); Prg.int n
+let size            = fun size -> size
+let smaller m       = fun size -> m (size-1)
+let iszero          = fun size -> size = 0
+
+let int limit       = fun size -> random_int limit
+let flip            = fun size -> match random_int 2 with
+                      | 0   -> false
+                      | _   -> true
+
+let concat (ts: 'a t list) = fun size ->
+                        let xs = List.map (fun t -> t size) ts in
+                            List.concat xs
+
+let choose lo hi =
+    let lo,hi = if hi < lo then hi,lo else lo,hi in
+    fun size -> lo + random_int (hi-lo+1)
+@
+
+<<randomize.ml>>=
+let list size t = 
+    size >>= fun n ->  
+    fun size ->
+    let rec loop i = 
+        if i <= 0 then [] else t size :: loop (i-1) 
+    in
+        List.rev @@ loop n
+
+let elements xs =
+    let a   = Array.of_list xs in
+    let len = Array.length a   in 
+        lift (Array.get a) (int len)
+
+let oneof ts = elements ts >>= (fun x -> x)
+
+let freq pairs = 
+    let sum  = List.fold_left (fun s pair -> s + fst pair) 0 pairs in
+    let rec pick n = function
+        | []                    -> assert false
+        | (k,x)::xs when n <= k -> x
+        | (k,x)::xs             -> pick (n-k) xs
+    in
+        int sum >>= fun n -> pick n pairs
+@

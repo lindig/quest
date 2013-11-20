@@ -1,0 +1,60 @@
+
+
+\section{Utilities}
+
+Function [[foldn f n z]] calls [[f]] $n$ times, passing $n=0,\dots,
+n-1$, and a threaded argument which is [[z]] for the first call to
+[[f]].
+
+<<util.mli>>=
+val foldn: (int -> 'a -> 'a) -> int -> 'a -> 'a
+@
+
+Function [[map3]] works like [[List.map2]], just for three lists. If the
+three lists vary in length, [[map3]] raises [[Invalid_arg]].
+
+<<util.mli>>=
+val map3: ('a -> 'b -> 'c -> 'x) -> 'a list -> 'b list -> 'c list -> 'x list
+@
+
+The right-associative Infix operator [[@@]] helps to avoid parantheses
+in applications: you can write [[f @@ g $$ y]] instead of [[f (g y)]].
+
+<<util.mli>>=
+val (@@): ('a -> 'b) -> 'a -> 'b 
+@
+
+The last element from a list.
+
+<<util.mli>>=
+val last: 'a list -> 'a
+@
+
+\implementation{Implementation}
+
+<<util.ml>>=
+let foldn f n z = 
+    let rec loop acc = function
+    | k when k = n  -> acc
+    | k             -> loop (f k acc) (k+1)
+    in
+        loop z 0
+@
+
+<<util.ml>>=
+let rec map3 f xs ys zs = match xs, ys, zs with
+    | x::xs, y::ys, z::zs -> f x y z :: map3 f xs ys zs
+    | []   , []   , []    -> []
+    | _                   -> invalid_arg "Util.map3: lists of different lengths"
+@
+
+<<util.ml>>=
+let (@@) f x = f x
+@
+
+<<util.ml>>=
+let rec last = function
+    | []    -> failwith "Util.last: empty list"
+    | [x]   -> x
+    | x::xs -> last xs
+@    

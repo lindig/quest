@@ -1,0 +1,295 @@
+\section{Abstract Syntax for C}
+
+This module provides an abstract syntax for the language C. The
+representation is incomplete and biased towards our simple application.
+For a more elaborated representation, confer the C Kit as part of
+Standard ML of New Jersey, and George Necula's CIL project.
+
+<<cee.mli>>=
+<<exposed types>>
+<<values>>
+@
+\paragraph{Types} We treat the [[char]] type as an integer. A [[struct]]
+or [[union]] optionally contains the list of its members. If this list
+is absent, the struct or union is referred to by name only. 
+
+<<exposed types>>=
+type size           = int
+type name           = string
+type signed         = Signed | Unsigned
+type iwidth         = Char | Short  | IInt | Long | LongLong
+type fwidth         = FFloat  | Double | LongDouble
+
+type function_type =
+    { return:       ty
+    ; args:         (name * ty) list
+    ; varargs:      ty list
+    }
+
+and ty =
+    | Void
+    | Int           of iwidth * signed
+    | Float         of fwidth 
+    | Ptr           of ty
+    | Array         of ty * size
+    | Struct        of name * (name * ty) list option
+    | Union         of name * (name * ty) list option
+    | Fun           of function_type
+    | TyName        of string
+    | Bitfield      of int * signed
+@
+
+The [[unsigned]] function turns an integer into a unsigned integer,
+regardless of its actual sign. It is a checked run-time error to apply
+[[unsigned]] to other types, resulting in a [[Failure]] exception.
+
+<<values>>=
+val unsigned: ty -> ty
+@
+
+\paragraph{Expressions} We treat [[char]], [[int]], and [[float]]
+literals as strings. It is an unchecked run-time error for these strings
+to violate the C syntax. This representation is not geared towards
+analysis: the exact type of such a literal cannot easily be deduced from
+this representation.
+
+<<exposed types>>=
+type infix   = Eq | Neq | Mult | Add    (* many more missing *)
+type prefix  = Not                      (* many more missing *)
+type postfix = PostDec | PostInc        (* many more missing *)
+
+<<exposed types>>=
+type expr = 
+    | ID            of string
+    | IntConst      of int
+    | Const         of string (* char, int, float, string *)
+    | Call          of expr * expr list
+    | Assign        of expr * expr
+    | Access        of expr * expr  (* array , index *) 
+    | Select        of expr * name  (* struct or union, member *)
+    | Arrow         of expr * name
+    | Deref         of expr 
+    | AddrOf        of expr
+    | Infix         of expr * infix * expr
+    | Prefix        of prefix * expr
+    | Postfix       of expr * postfix
+    | Cast          of ty   * expr
+    | Type          of ty 
+@
+
+An initializer is an optional part of a variable declaration and holds
+values.
+
+<<exposed types>>=
+type init = 
+    | SingleInit    of expr
+    | CompoundInit  of init list
+
+type decl = 
+    | VarDecl of name * ty * init option
+    | Typedef of name * ty
+@    
+
+We only need minimal support for statements.
+<<exposed types>>=
+type stmt =
+    | Expr          of expr
+    | Block         of decl list * stmt list
+    | Return        of expr option
+    | IfThen        of expr * stmt
+    | IfThenElse    of expr * stmt * stmt
+    | Comment       of string
+    | Nop
+    (* incomplete *)
+@
+
+A variable declared inside a function may have in initializer, while a
+formal parameter may not. Otherwise the two are very similar.
+<<exposed types>>=
+type fundef =
+    { name:     name                    (* name of this function *)
+    ; static:   bool
+    ; ty:       function_type
+    ; decls:    decl list               (* variable declarations in body *)
+    ; body:     stmt list               (* statements in body *)
+    }
+@
+
+
+<<exposed types>>=
+type scope    = Static | Extern | Public
+type toplevel =
+    | TopDecl   of scope * decl
+    | Function  of fundef
+    | CPP       of string   (* C Preprocessor statement *)
+
+type program = toplevel list
+@
+
+\paragraph{Functions on Types} The [[sizeof]] function returns an
+integer that approximates the size of a type. It is not meant to model
+the [[sizeof]] operator in C precisely.
+
+<<values>>=
+val sizeof: ty -> int       (* not negative *)
+@
+
+The [[strip]] function strips the body from structs in a type. As a
+consequence, the struct type must be referred to by name, and hence
+must be declared previously.
+
+<<values>>=
+val strip: ty -> ty
+@
+
+The [[simple]] predicate is true, if a type's value can be written as a
+literal. It is a checked run-time error to apply [[simple]] to the void
+type.
+
+Predicate [[function_type]] holds for a function that takes var args.
+
+<<values>>=
+val variadic: function_type -> bool
+@
+
+<<unemplemented values>>=
+val issimple: ty -> bool
+@
+
+The [[pointable]] predicate is true, if a type's textual expression can
+be turned into a pointer type by simply appending a ``*''. This is a
+requirement for types that are passed to [[va_arg]] that accesses a
+var arg.
+
+<<values>>=
+val pointable: ty -> bool
+@
+
+\paragraph{Some C Types}
+
+<<values>>=
+val int:    ty     
+val char:   ty
+val string: ty
+@
+
+\paragraph{Header Files} The function [[include_headers]] scans a
+program and adds the necessary includes for header files at its front.
+Currently, this function only looks for variadic function
+\textemph{definitions} in the body and adds [[#include <stdarg.h>]] when
+it finds at least one. Thus, we avoid the include if we don't need it.
+
+<<values>>=
+val include_headers: program -> program
+@
+
+\implementation{Implementation}
+
+<<cee.ml>>=
+<<exposed types>>
+@
+
+The [[sizeof]] function makes simplified assumptions over the sizes of
+base types. In particular, it does not take alignment into account. The
+numbers returned are typical for 32-bit platforms.
+
+<<cee.ml>>=
+let rec sizeof = function
+    | Void              -> 0
+    | Int(Char,_)       -> 1
+    | Int(Short,_)      -> 2
+    | Int(IInt,_)       -> 4
+    | Int(Long,_)       -> 8
+    | Int(LongLong,_)   -> 16
+    | Bitfield(_,_)     -> 1
+    | Float(FFloat)     -> 4
+    | Float(Double)     -> 8
+    | Float(LongDouble) -> 16
+    | Ptr(_)            -> 4
+    | Array(t,n)        -> n * sizeof t
+    | Struct(_,None)    -> failwith "sizeof: struct reference"
+    | Struct(_,Some ms) -> List.fold_left 
+                            (fun s (n,t) -> s+(sizeof t)) 0 ms
+    | Union(_,None)     -> failwith "sizeof: union rerefence"
+    | Union(_,Some ms)  -> List.fold_left 
+                            (fun s (n,t) -> max s (sizeof t)) 0 ms
+    | Fun(_)            -> 4                        
+    | TyName _          -> failwith "sizeof: named type"
+@
+
+A complex type contains for unions and structs the declaration of all
+fields. For function parameters we rather want to refer to structs and
+unions just by their name. The [[strip]] function takes a type and
+strips from struct and union types their fields such that only reference
+to the struct tag remains. 
+
+<<cee.ml>>=
+let rec strip = function
+    | Struct(n,Some ms) ->    Struct(n, None)
+    | Union (n,Some ms) ->    Union (n, None)
+    | Ptr(t)            ->    Ptr(strip t)
+    | Array(t,n)        ->    Array(strip t,n)
+    | Fun(f)            ->    Fun(strip_function_type f)
+    | x                 ->    x  
+
+and strip_function_type fty =
+    { return  = strip fty.return
+    ; args    = List.map (function name, ty -> name, strip ty) fty.args
+    ; varargs = List.map strip fty.varargs
+    }
+@
+
+<<cee.ml>>=
+let simple = function
+    | Void      -> failwith "applied Cee.simple to Void"
+    | Int(_)    -> true
+    | Float(_)  -> true
+    | _         -> false (* we consider pointers as complex types *)
+@    
+
+<<cee.ml>>=
+let pointable = function
+    | Array(_,_)    -> false
+    | Fun(_)        -> false 
+    | _             -> true
+@
+
+<<cee.ml>>=
+let variadic fty = fty.varargs <> []
+@
+
+\paragraph{C Types}
+
+<<cee.ml>>=
+let int     = Int(IInt, Signed)
+let char    = Int(Char, Signed)
+let string  = Ptr(char)
+@
+
+<<cee.ml>>=
+let unsigned = function
+    | Int(t,_)  -> Int(t,Unsigned)
+    | _         -> failwith "Cee.unsigned applied to non-integer type"
+@
+
+\paragraph{Header Files}
+
+<<cee.ml>>=
+type header =
+    { stdarg: bool
+    }
+    
+let headers prg = 
+    let scan header = function
+        | Function({ty = {varargs=_::_}}) -> { header with stdarg = true }
+        | _ -> header
+    in
+        List.fold_left scan { stdarg = false } prg
+
+let include_headers prg =
+    (* let prg = CPP("#include <assert.h>") :: prg in
+     *)
+    let h   = headers prg in
+    let prg = if h.stdarg then CPP("#include <stdarg.h>") :: prg else prg in
+        prg
+    

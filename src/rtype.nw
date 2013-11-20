@@ -1,0 +1,246 @@
+%---------%---------%---------%---------%---------%---------%---------%---------
+%1--------10--------20--------30--------40--------50--------60--------70--------
+
+\section{Random C Types}
+
+The module provides generators that generate C types randomly. A complex
+generator can be composed from simpler generators to exercise control
+how types are generated.
+
+This module is based on the more general module [[Randomize]] that
+provides the base technology for composing generators. A generator for
+values of type [['a]] has type [['a t]]. It is a \emph{monad}
+(c.f.~module [[Randomize]]) and knows three important operations:
+[[return]] and [[bind]] to build a monad (i.e., a generator) and
+[[run]], to run it. 
+
+<<rtype.mli>>=
+exception Error of string
+
+type 'a t       (* generates value of type 'a when run *)
+
+val bind:       'a t -> ('a -> 'b t) -> 'b t
+val return:     'a -> 'a t
+val run:        'a t -> Unique.t -> Randomize.size -> 'a
+@
+
+The [[run]] function takes a source for unique names and a [[size]]
+parameter. This parameter controls the mamximum height of the tree-shaped
+type. The [[smaller]] function takes a generator and returns a new one,
+that produces a smaller type. More precisely, it produces a type of size
+$n-1$ when $n$ is the actual size. The [[smaller]] function is essential
+for recursive generators. 
+
+<<rtype.mli>>=
+val size:       int t                   (* access actual size *)
+val smaller:    'a t -> 'a t            (* decrease size *)
+val iszero:     bool t
+@
+
+
+\paragraph{Monadic Operations from the Randomize Module} The operations
+from module [[Rndomize]] to build generators are provided here, too.
+Since [['a t]] is a different monad than [['a Randomize.t]], these two
+cannot be easily mixed and we had to adopt them. Please refer to the
+documentation of module [[Randomize]].
+
+<<rtype.mli>>=
+val flip:       bool t                      (* equal chance of true/false *)
+val integer:    int -> int t                (* integer in [0,x]     *)      
+val choose:     int -> int -> int t         (* integer in [lo,hi]   *)
+val elements:   'a list -> 'a t             (* pick item from list  *)
+val list:       int t -> 'a t -> 'a list t  (* list of lenght i using gen *)
+val oneof:      ('a t) list -> 'a t         (* pick a generator     *)
+val freq:       (int * 'a t) list -> 'a t   (* weighted pick of generator *)
+val concat:     'a list t list -> 'a list t 
+@
+
+\paragraph{Generators for C types} The most important generators are
+those for C types; such a generator has type [[ct]]. A complex generator
+may take other generators as arguments, in particular an [[int t]]
+generator to decide the length of an array or the number of members in a
+struct. There is a type synonym [[it]] for these int-generating
+generators.
+
+<<type abbreviations>>=
+type ct         = Cee.ty t      (* C-type generator *)
+type cts        = Cee.ty list t
+type it         = int  t        (* int generator    *)    
+
+<<rtype.mli>>=
+<<type abbreviations>>
+
+val char:       ct
+val short:      ct
+val int:        ct
+val long:       ct
+val longlong:   ct
+
+val unsigned:   ct -> ct        (* must be applied to integer type *)
+val bitfield:   it -> ct
+
+val float:      ct
+val double:     ct
+val longdouble: ct
+
+val any_int:    ct              
+val any_float:  ct
+@
+
+Complex types require complex generators. Such a generator takes a
+generator of type [[ct]] as argument and uses it to generate the
+embedded type. Functions [[array]], [[structure]] and [[union]] take an
+additional integer generator that decides about the number of members in
+these types.
+
+<<rtype.mli>>=
+val array:      ct -> it -> ct
+val pointer:    ct -> ct
+val structure': ct -> it -> ct  (* deprecated *)
+val union':     ct -> it -> ct  (* deprecated *)
+@
+
+Here is a better interface for structures and unions. The interface is
+better because it is based on the more general list generators.
+
+<<rtype.mli>>=
+val structure: cts -> ct
+val union:     cts -> ct
+@
+
+\implementation{Implementation}
+
+<<rtype.ml>>=
+module R = Randomize
+module C = Cee
+module U = Unique
+@
+
+A type generator is like a general generator [[R.t]] but requires a
+source for unique names. We thus \emph{extend} the generator monad
+[[R.t]] with a new operation [[fetch]] that gives us access to unique
+names. The key is, that we want to implement the extended monad
+\emph{without} revealing the implementation of [[R.t]]. 
+
+Here we are constructing a new monad [[t]] that relies on the existing
+monad [[R.t]]. Function [[liftM]] provides us with the functions from
+the existing monad such that we only have to implement what is specific
+for our purpose.
+
+
+<<rtype.ml>>=
+exception Error of string
+
+type env    = U.t   (* source for unique names *)
+type 'a t   = env -> 'a R.t 
+<<type abbreviations>>
+
+let error fmt = Printf.kprintf (fun str -> raise (Error str)) fmt
+let (@@) f x  = f x
+let liftM (r: 'a R.t) = fun env -> r
+@
+
+Below are the essential monadic operations; [[fetch]] provides access to
+unique names.
+
+<<rtype.ml>>=
+let bind t f        = fun env -> R.bind (t env) (fun x -> f x env)
+let (>>=)           = bind
+let return x        = liftM (R.return x)
+let fetch           = R.return
+let run t env size  = R.run (t env) size
+
+let lift  f m       = m  >>= fun x -> return (f x)
+let lift2 f m1 m2   = m1 >>= fun x -> m2 >>= fun y -> return (f x y)
+@
+
+\paragraph{Standard Generators} Here we lift the operations from the
+existing monad into ours. Note, that we don't have to reveal the
+implementation of [[R.t]]. Function [[size]] provides access to the
+desired size of the value under construction; [[smaller]] takes a
+generator but asks for a vallue of smaller actual size. This operation
+is essential to ensure termination for recursive generators.  
+
+<<rtype.ml>>=
+let size            = liftM R.size
+let iszero          = liftM R.iszero
+let smaller m       = fun env -> R.smaller (m env)
+
+let flip            = liftM R.flip
+let integer n       = liftM (R.int n)
+let choose lo hi    = liftM (R.choose lo hi)
+let elements xs     = liftM (R.elements xs)
+let list size ty    = fun env -> R.list (size env) (ty env)
+let oneof rs        = fun env -> R.oneof (List.map (fun r -> r env) rs)
+let freq pairs      = fun env -> R.freq (List.map (fun (x,r) -> x,r env) pairs)
+
+let concat ts       = fun env -> R.concat (List.map (fun t -> t env) ts)
+@
+
+\paragraph{C-specific Generators} Finally we can define generators for C
+types.
+
+<<rtype.ml>>=
+let signed x        = C.Int(x,C.Signed)
+
+let char            = return @@ signed C.Char
+let short           = return @@ signed C.Short
+let int             = return @@ signed C.IInt
+let long            = return @@ signed C.Long
+let longlong        = return @@ signed C.LongLong
+
+let unsigned m =
+    m >>= function
+    | C.Int(x,_)      -> return @@ C.Int(x,C.Unsigned)
+    | C.Bitfield(x,_) -> return @@ C.Bitfield(x,C.Unsigned)
+    | _               -> error "applied unsigned() to a non-integer type"
+
+let float           = return @@ C.Float(C.FFloat)
+let double          = return @@ C.Float(C.Double)
+let longdouble      = return @@ C.Float(C.LongDouble)
+
+let bitfield n =    n >>= fun n -> return @@ C.Bitfield(n,C.Signed)
+
+<<rtype.ml>>=
+let iwidth              = elements [C.Char; C.Short; C.IInt; C.Long]
+let signed              = elements [C.Signed; C.Unsigned]
+let fwidth              = elements [C.FFloat; C.Double]
+let any_int             = lift2 (fun w s -> C.Int(w,s)) iwidth signed
+let any_float           = lift  (fun w   -> C.Float(w)) fwidth
+@
+
+A generator for a complex types takes a generator [[ctype]] as argument
+for its embedded types. 
+
+<<rtype.ml>>=
+let array     ctype n   = lift2 (fun t n -> C.Array(t,n)) ctype n
+let pointer   ctype     = lift  (fun t -> C.Ptr(t)) ctype
+let member    ctype     = ctype >>= fun t -> 
+                          fetch >>= fun u -> return (U.variable u,t)
+let members   ctype n   = list n @@ member ctype
+
+let structure' ctype n = (* deprecated *)
+    members ctype n >>= fun ms -> 
+    fetch >>= fun u  ->
+        return @@ C.Struct(U.type_tag u, Some ms)
+
+let union' ctype n = (* deprecated *)
+    members ctype n >>= fun ms ->
+    fetch >>= fun u  ->
+        return @@ C.Union(U.type_tag u, Some ms)
+
+let structure ctypes =
+    ctypes >>= fun ts ->
+    fetch  >>= fun u  ->
+        let members = List.map (fun t -> (U.variable u,t)) ts in
+            return @@ C.Struct(U.type_tag u, Some members)
+
+let union ctypes =
+    ctypes >>= fun ts ->
+    fetch  >>= fun u  ->
+        let members = List.map (fun t -> (U.variable u,t)) ts in
+            return @@ C.Union(U.type_tag u, Some members)
+
+@                 
+
+

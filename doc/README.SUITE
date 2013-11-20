@@ -1,0 +1,44 @@
+---------------------------------------------------------------------- 
+    $Id: README.SUITE 4 2006-11-09 12:02:13Z lindig $
+---------------------------------------------------------------------- 
+
+                            Quest Test Suite
+
+This directory contains C source code that tests the parameter passing
+implementation of a C compiler. Source files come in two flavors:
+
+o A single file quest-XXX.c can be compiled and run individually. Such a
+  file contains a main() function that is executed. When the program
+  detects an error, it emits a message to stdout and exists with a
+  positive exit code.
+
+  cc -o quest-XXX quest-XXX.c
+  ./quest-XXX
+
+o A pair of files quest-main-XXX.c and quest-callee-XXX.c. These files
+  have to be compiled individually and linked together to form an
+  executable. The idea is to compile the two files by different
+  compilers to check their interoperability.
+
+  cc -c quest-XXX-callee.c
+  gcc -c quest-XXX-main.c
+  gcc -o quest-XXX quest-XXX-callee.o quest-XXX-main.o
+  ./quest-XXX
+
+  The main() function is in quest-man-XXX.c and calls functions in
+  quest-callee-XXX.c. When the program detects an error during its
+  execution, it prints a 
+  
+
+If you find Quest useful and it helps you to uncover bugs in a C
+compiler, I would be glad to hear your story. Please send me an email:
+Christian Lindig <lindig@cs.uni-sb.de>.
+
+
+                                Quest
+
+The test cases in this directory were generated with Quest, the Quick
+and Simple Tester. 
+
+            http://www.st.cs.uni-sb.de/~lindig/src/quest/
+

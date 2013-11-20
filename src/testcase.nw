@@ -1,0 +1,109 @@
+
+\section{Test Cases}
+
+This module provides a generator for test cases, which is essentually a
+function declaration. A test case is polymorphic about the specification
+the representation of parameters and return values in the declaration.
+There are two common cases: a [[Cee.ty t]] test cases only specifies the
+types of parameters, a [[value t]] test cases specifies types along with
+matching values.
+
+A value is a record, holding a type, a value of that type (as a C
+initializer), and a globally unique name. The name is used for a
+global variable to hold the value. 
+
+A test case [[t]] is essentially a function declaration, plus some
+extras. The essential part are the arguments, extra (varg) arguments,
+and the return value. In addition, there is the scope (static vs.
+non-static) of the function, a source for function-local names, and a
+seed. The seed records the state of the random number generator when the
+test case was created. It can be used to re-create the same test case.
+
+<<public types>>=
+type value  =  
+    { ty:   Cee.ty              (* type of this value *)
+    ; init: Cee.init            (* value that matches ty *)
+    ; name: Cee.name            (* globally unqiue *)
+    }
+
+type 'a t      = 
+    { uniq:     Unique.t        (* source for names *)
+    ; seed:     int             (* seed used for this testcase *)
+    ; static:   bool            (* function under test static or not? *)
+    ; args:     'a list         (* parameters *)
+    ; varargs:  'a list         (* varargs following args *)
+    ; return:   'a              (* return value *)
+    }
+
+type vt     = value t
+type suite  = value t list
+@
+
+Functions to generate test cases. A type-only test case of type 
+[[Cee.ty t]] can be populated with matching values.
+
+The [[generate]] function takes as arguments a strategy, the number
+[[n]] of test cases to generate, and the [[size]] of each test case. The
+strategy encodes the statistical distribution of types used for test
+cases.
+
+<<testcase.mli>>=
+<<public types>>
+val generate':  Strategy.t -> n:int -> size:int -> Cee.ty t list
+val generate:   Strategy.t -> n:int -> size:int -> value  t list
+val populate:   Cee.ty t -> value t
+@
+
+\section{Implementation}
+
+<<testcase.ml>>=
+module R  = Randomize
+module RT = Rtype
+module S  = Strategy
+
+<<public types>>
+
+let warning    = Printf.eprintf
+let (@@) f x   = f x
+
+let mk_value idgen ty =
+    { ty   = ty
+    ; init = Randinit.init ty
+    ; name = idgen ()
+    }
+
+let populate t =
+    let vgen () = Unique.variable t.uniq in
+    { uniq    = t.uniq
+    ; seed    = t.seed
+    ; static  = t.static
+    ; args    = List.map (mk_value vgen) t.args
+    ; varargs = List.map (mk_value vgen) t.varargs
+    ; return  = mk_value vgen t.return
+    }
+
+
+let testcase strategy size =
+    let unique      = Unique.make () in
+    let seed        = Prg.state () in (* obtain actual seed *)
+    let rtn_type    = RT.run strategy.S.return unique size in
+        { args    = RT.run strategy.S.args    unique size
+        ; varargs = RT.run strategy.S.varargs unique size
+        ; return  = RT.run strategy.S.return  unique size
+        ; static  = RT.run strategy.S.static unique size
+        ; uniq    = unique
+        ; seed    = seed
+        }
+
+let generate' strategy ~n ~size =
+    let collect n acc = match testcase strategy size with
+        | { args=[]; varargs=x::xs } ->
+                ( warning "dropping variadic function with empty argv\n"
+                ; acc
+                )
+        | t ->  t :: acc (* ok *)
+    in            
+        List.rev @@ Util.foldn collect n []
+
+let generate strategy ~n ~size = List.map populate @@ generate' strategy n size
+@

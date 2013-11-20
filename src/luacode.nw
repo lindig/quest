@@ -1,0 +1,25 @@
+
+% ------------------------------------------------------------------
+\section{Lua Code}
+% ------------------------------------------------------------------
+
+This module contains Lua source code that is shipped with the
+application. For separation of concerns we put the code into different
+tables that act like modules in Lua.
+
+For simplicity, all Lua code is embedded into the application as a
+string. The interface of this module just contains these strings. 
+<<luacode.mli>>=
+val quest:  string
+val manual: string  (* manual page *)
+val date:   string  (* compilation date *)
+@
+
+
+% ------------------------------------------------------------------ 
+\subsection{Implementation}
+% ------------------------------------------------------------------
+
+The implementation resides in Lua source files in the [[share/]]
+directory. The [[luacode.ml]] file is built from these in the build
+process.

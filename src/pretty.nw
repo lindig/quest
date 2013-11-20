@@ -1,0 +1,227 @@
+
+% ------------------------------------------------------------------  
+\section{Pretty Printer}
+% ------------------------------------------------------------------ 
+
+This module provides a pretty printer modeled after the pretty printer
+proposed by Philip Wadler [A prettier printer; The Fun of Programming. A
+symposium in honour of Professor Richard Bird's 60th birthday
+Examination Schools, Oxford, 24-25 March 2003]. A client builds an
+abstract document value of type [[t]] that can be formatted for a chosen
+line width.
+
+Simple documents are the [[empty]] document, a document constructed from
+a string, and a [[break]]. A break represents a space or a newline, at
+the pretty printer's decision. If enough space is available, it will
+represent the [[break]] as a space, and as a newline otherwise. Deciding
+about the representation of breaks according to the available space is
+the pretty printer's foremost job.
+
+Functions [[text]] and [[printf]] turn strings into documents, where
+[[printf]] accepts a printf format string and additional arguments.
+(Don't get confuse by the type; the returned value is of type [[t]].)
+
+<<pretty.mli>>=
+type t                          (* a printable document *)
+
+val empty : t                   (* empty document *)
+val break:  t                   (* space or newline *)
+val text:   string -> t         (* create document from string *)
+val printf: ('a, unit, string, t) format4 -> 'a
+@
+
+\paragraph{Composing Documents} Documents can be concatenated from
+simpler documents using [[cat]]. For a client it is often convenient to
+define [[cat]] as an infix operator, which should be right-associative
+for efficiency.
+
+<<pretty.mli>>=
+val cat : t -> t -> t       (* clients define let (^^) = Pretty.cat *)
+@
+
+\paragraph{Grouping and Nesting} When the pretty printer decides to
+represent a [[break]] as a newline it also prints some spaces after it
+to indent the following line.  The number of spaces is controlled by the
+[[nest]] operator that takes a document as argument:  [[nest n t]].  All
+breaks turned to newlines inside document [[t]] are followed by [[n]]
+spaces.  The [[nest]] operator nests properly such that it takes the
+spaces introduced by [[nest]]s on the outer level also into account.
+
+<<pretty.mli>>=
+val nest : int -> t -> t
+@
+
+Documents may be grouped.  When the pretty printer decides about the
+representation of [[breaks]], it considers all breaks in a group at
+once: they are all rendered as spaces or newlines. A group is printed
+with spaces if it fits completely into the available space, and with
+newlines otherwise. On the outermost level, a [[break]] is always
+rendered as a newline.
+
+<<pretty.mli>>=
+val group : t -> t
+@
+
+\paragraph{Formatting} Formatting renders a document [[t]] according to
+a provided line width, and emits it.
+
+<<pretty.mli>>=
+val to_string: int -> t -> string
+val to_file:   out_channel -> int -> t -> unit
+@
+
+% ------------------------------------------------------------------  
+\implementation{Implementation}
+% ------------------------------------------------------------------ 
+
+<<pretty.ml>>=
+type t =
+    | Empty
+    | Cons    of t * t
+    | Text    of string
+    | Nest    of int * t
+    | Break   of string
+    | Group   of t
+
+<<pretty.ml>>=
+let space               = " "
+
+let cat left right      = Cons(left,right)
+let empty               = Empty
+let text s              = Text(s)
+let printf fmt          = Printf.kprintf (fun msg -> Text(msg)) fmt
+let nest i t            = Nest(i,t)
+let break               = Break(space)
+let group t             = Group(t)
+@
+The function [[layout emit a w t]] folds a document [[t]] for a line
+width [[w]]; [[layout]] passes strings to [[emit]] together with an
+accumulator [[a]], which returns a value used for the next call to
+[[emit]] and which is finally returned by [[layout]].
+
+An inner [[loop]] does all the work of linearizing a tree-structured
+document of type [[t]]. The [[loop]] maintains an indentation [[i]],
+available space [[w]], and a mode [[m]], which is either [[Flat]] or
+[[Break]]. In [[Flat]] mode, breaks are renders as spaces, in [[Break]]
+mode, breaks are rendered as newlines, followed by [[i]] spaces. 
+
+All documents in a group share the same mode, except that a [[Flat]]
+group may contain groups in [[Break]] mode.  The pretty printer decides
+the mode of a group using the [[fits]] predicate. It is true, if a break
+can be found within the available width, provided the group and all its
+sub groups are rendered as flat (breaks as spaces). Since such a group
+contains by definition no break, there must be a break following the
+group within the available space.
+
+The correctness of the algorithm is subtle: for the [[fits]] predicate a
+group and all its subgroups but be checked in [[Flat]] mode, but groups
+following the group under consideration must be rendered in [[Break]]
+mode in order to find the desired break.
+
+The case below for [[Group(x)]] works, because a group under
+consideration is rendered [[Flat]] and thus all sub groups are rendered
+as [[Flat]], too. The group under consideration is contained in a
+document in either [[Break]] or [[Flat]] mode. If it is [[Break]], these
+groups are checked by [[fits]] in [[Break]] mode as desired. If the mode
+is [[Flat]], [[fits]] is not called because of the optimization in
+[[layout]]: a group as part of a [[Flat]] document is always known to
+fit.
+
+<<pretty.ml>>=
+type mode       = Flat | Brk
+let strlen      = String.length
+let rec fits w  = function (* tail recursive *)
+    | _ when w < 0           -> false
+    | []                     -> true
+    | (i,m,Empty)       :: z -> fits w z
+    | (i,m,Cons(x,y))   :: z -> fits w ((i,m,x)::(i,m,y)::z)
+    | (i,m,Nest(j,x))   :: z -> fits w ((i+j,m,x)::z)
+    | (i,m,Text(s))     :: z -> fits (w - strlen s) z
+    | (i,Flat,Break(s)) :: z -> fits (w - strlen s) z
+    | (i,Brk,Break(_))  :: z -> true
+    | (i,m,Group(x))    :: z -> fits w ((i,m,x)::z)
+@
+
+
+<<pretty.ml>>=
+let rec layout: ('a -> string -> 'a) -> 'a -> int -> t -> 'a = 
+    fun emit out w x -> 
+    let nl  acc i = emit (emit acc "\n") (String.make i ' ') in
+    let rec loop acc w k = function (* tail recursive *)
+    | []                          -> acc
+    | (i,m,Empty)       :: z -> loop acc w k z
+    | (i,m,Cons(x,y))   :: z -> loop acc w k ((i,m,x)::(i,m,y)::z)
+    | (i,m,Nest(j,x))   :: z -> loop acc w k ((i+j,m,x)::z)
+    | (i,m,Text(s))     :: z -> loop (emit acc s) w (k + strlen s) z
+    | (i,Flat,Break(s)) :: z -> loop (emit acc s) w (k + strlen s) z
+    | (i,Brk,Break(s))  :: z -> loop (nl   acc i) w i z 
+    | (i,Flat,Group(x)) :: z -> loop acc w k ((i,Flat,x)::z)  (*optimization*)
+    | (i,m,Group(x))    :: z -> if fits (w-k) ((i,Flat,x)::z) (*scan beyond x!*)
+                                then loop acc w k ((i,Flat,x)::z)
+                                else loop acc w k ((i,Brk, x)::z)
+    in
+        loop out w 0 [(0,Brk,x)]
+@
+
+Every [[Break]] belongs to a group, except those on the outermost level.
+In Wadler's pretty printer those are always rendered as newline which
+makes the outmost level implicitly a group with mode [[Brk]].
+
+Depending on our output channel we build an [[emit]] function that
+either append strings to a buffer, or emits it to a channel.
+
+<<pretty.ml>>=
+let to_string w t = 
+    let buf     = Buffer.create 256     in      (* grows as needed *)
+    let emit () = Buffer.add_string buf in
+    let ()      = layout emit () w t   in
+        Buffer.contents buf
+        
+let to_file oc w t = 
+    let emit () = output_string oc in
+        layout emit () w t
+@
+
+\paragraph{Code for Tests}
+
+I used the following code interactively in debugging sessions. It is
+hidden by the interface.
+
+<<pretty.ml>>=
+module Test = struct
+    <<Test>>
+end
+
+<<Test>>=
+let (^^) = cat
+let (^/) x y    = if x = empty then y 
+                  else if y = empty then x 
+                  else x ^^ break ^^ y
+let nest        = nest 4
+let group x     = group (text "<" ^^ x ^^ text ">")
+let (^+) x y    = x ^^ nest (break ^^ y)                  
+let (<<) f g x  = f (g x)
+
+let rec list sep f xs =
+    let rec loop acc = function
+        | []    -> acc
+        | [x]   -> acc ^^ f x 
+        | x::xs -> loop (acc ^^ f x ^^ sep) xs
+    in
+        loop empty xs 
+
+let bracket l x r =
+    group (l ^^ nest (break ^^ x) ^/ r)
+@
+
+<<Test>>=
+let rec repeat n x = match n with
+    | 0 -> []
+    | n -> x :: repeat (n-1) x
+
+let words n = list break text (repeat n "foobar")
+
+let ifthen cond body = 
+    text "if (" ^^ cond ^^ text ")" ^^ bracket (text "{") body (text "}")
+@    
+

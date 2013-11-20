@@ -1,0 +1,25 @@
+
+\section{Test Strategy}
+
+A test strategy is a collection of generators for C types that are
+together used to generate test cases. This module provides some useful
+strategies, mostly for backward compatibility. Previous, it was not
+possible to define new strategies easily.
+
+<<interface>>=
+type t =
+    { args:             Rtype.cts
+    ; varargs:          Rtype.cts
+    ; return:           Rtype.ct
+    ; static:           bool Rtype.t
+    }
+@
+
+Implementation and interface are the same because we only define a type.
+
+<<strategy.mli>>=
+<<interface>>
+
+<<strategy.ml>>=
+<<interface>>
+
