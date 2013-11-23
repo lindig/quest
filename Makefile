@@ -7,12 +7,13 @@ BINDIR  = $(PREFIX)/bin
 OCB	= ocamlbuild
 
 LIPSUM  = https://github.com/lindig/lipsum.git
-LP	= lipsum
+LP	= ./lipsum/lipsum.native
 
 all:	src	
 	$(OCB) -I lua-ml -I src -libs unix src/main.native	
 
-src:
+src:	FORCE
+	$(MAKE) -C lipsum all
 	$(MAKE) -C lua-ml all
 	$(MAKE) -C src all
 

@@ -2,6 +2,7 @@
 #
 
 TOP =	    ..
+LP =	    $(TOP)/lipsum/lipsum.native
 
 SRC =
 SRC += cee.ml
@@ -41,10 +42,10 @@ all:	    src
 src:	    $(SRC) luacode.ml
 
 %.ml:	    %.nw
-	    lipsum tangle -f cpp $@ $< > $@
+	    $(LP) tangle -f cpp $@ $< > $@
 
 %.mli:	    %.nw
-	    lipsum tangle -f cpp $@ $< > $@
+	    $(LP) tangle -f cpp $@ $< > $@
 
 clean:
 	    rm -f quest.man luacode.ml

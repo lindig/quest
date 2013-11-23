@@ -3,7 +3,7 @@
 #
 
 TOP =		..
-LP =		lipsum
+LP =		$(TOP)/lipsum/lipsum.native
 OCY =		ocamlyacc		
 
 SRC =
