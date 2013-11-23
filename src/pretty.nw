@@ -200,7 +200,7 @@ let (^/) x y    = if x = empty then y
 let nest        = nest 4
 let group x     = group (text "<" ^^ x ^^ text ">")
 let (^+) x y    = x ^^ nest (break ^^ y)                  
-let (<<) f g x  = f (g x)
+let (@<<) f g x  = f (g x)
 
 let rec list sep f xs =
     let rec loop acc = function

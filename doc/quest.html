@@ -1,0 +1,500 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:_mdnsresponder@jackson.apple.com" />
+</head>
+
+<body style="background-color: white">
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#OPTIONS">OPTIONS</a></li>
+  <li><a href="#SIMPLE-EXAMPLES">SIMPLE EXAMPLES</a></li>
+  <li><a href="#ADVANCED-EXAMPLES">ADVANCED EXAMPLES</a></li>
+  <li><a href="#TYPE-GENERATORS-IN-LUA">TYPE GENERATORS IN LUA</a></li>
+  <li><a href="#VAR-ARGS">VAR ARGS</a></li>
+  <li><a href="#PRIMITIVE-GENERATORS">PRIMITIVE GENERATORS</a></li>
+  <li><a href="#THE-GENERATED-CODE">THE GENERATED CODE</a></li>
+  <li><a href="#EXIT-CODE">EXIT CODE</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>quest -- extensible test-code generator for C compilers</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p><b>quest</b> [<b>-test</b> <i>test</i>] [<b>-n</b> <i>number</i>] [<b>-s</b> <i>depth</i>] [<b>-1</b>|<b>-2</b>] [<b>-o</b> <i>basename</i>] [<b>-i</b>] [<b>-e</b> <i>Lua chunk</i>] [<i>x=y</i>] [<i>file</i><b>.lua</b>] [<b>-seed</b> <i>number</i>]</p>
+
+<p><b>quest -list|-lua|-man|-help|-version</b></p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Quest generates random C code to tests the parameter passing implementation of a C compiler. When generated code is compiled and executed, it checks that the values passed are actually the ones that are expected. The generated code signals an error to stdout when it finds parameter-passing bugs.</p>
+
+<p>Quest can emit code into one or two C source files. Two files may be compiled by different compilers to check their interoperability. When Quest generates code for two files, one file contains calling functions and the other called functions.</p>
+
+<p>Quest has an embedded interpreter for the scripting language Lua 2.5 that drives the top level of Quest. A user may add her own Lua code to define additional test code generators. Adding a new test-code generator is declarative and takes about 30 lines per generator.</p>
+
+<h1 id="OPTIONS">OPTIONS</h1>
+
+<dl>
+
+<dt id="test-suite"><b>-test</b> <i>suite</i></dt>
+<dd>
+
+<p>Use the test-code generator <i>suite</i>. Such a generator may be defined by the user using the built-in Lua scripting language -- see below. By default, the <b>ansi</b> generator is used. For a list of available generators see the <b>-list</b> option.</p>
+
+</dd>
+<dt id="list"><b>-list</b></dt>
+<dd>
+
+<p>List available test suites to stdout and quit.</p>
+
+</dd>
+<dt id="n-int"><b>-n</b> <i>int</i></dt>
+<dd>
+
+<p>Test cases per file: the <b>-n</b> flag indicates how many test cases per file to generate. The default is 20.</p>
+
+</dd>
+<dt id="s-int"><b>-s</b> <i>int</i></dt>
+<dd>
+
+<p>Test complexity: <b>-s</b> indicates the complexity (or size) of the types used in a test case. A C type has a tree structure with simple types at the leaves and complex types like structs, pointers, and arrays at the inner nodes. The size provided by <b>-s</b> is the maximum depth of such a tree; the default size is 2.</p>
+
+<p>Below are trees of depth 1, 2, and 3 to illustrate the concept of depth; curly brackets denote structs and unions, a star denotes a pointer type.</p>
+
+<pre><code>     0      1         2              3
+    
+    char    *         *              {}
+            |         |             /  \
+           int        {}         int   {}
+                     /  \             /  \
+                  double int         *   char 
+                                     |
+                                    float</code></pre>
+
+<p>For example, with <b>-s 0</b> all types are simple (scalar) types; with <b>-s 1</b> a type may be a union or a pointer, but it must contain only simple types.</p>
+
+</dd>
+<dt id="pod-1"><b>-1</b></dt>
+<dd>
+
+<p>Generate code for one file (compilation unit) and write it to stdout; this is the default.</p>
+
+</dd>
+<dt id="pod-2"><b>-2</b></dt>
+<dd>
+
+<p>Generate code for two files (compilation units) whose names are controlled by the <b>-o</b> flag. No code is written to stdout.</p>
+
+</dd>
+<dt id="o-name"><b>-o</b> <i>name</i></dt>
+<dd>
+
+<p>When generating code for two files, write them to <i>name</i><code>-main.c</code> and <i>name</i><code>-callee.c</code>; the default for <i>name</i> is <code>quest</code> and the two default files are thus <code>quest-main.c</code> and <code>quest-callee.c</code>. The <code>quest-main.c</code> file contains the <code>main()</code> function of the program that results from compiling and linking these two files together.</p>
+
+</dd>
+<dt id="try-gen"><b>-try</b> <i>gen</i></dt>
+<dd>
+
+<p>Instead of generating code, print the C types generated by generator <i>gen</i> to stdout. The generator <i>gen</i> must be specified as a Lua variable, e.g. <code>Test.ansi.result</code> and is <b>not</b> the same a test suite as accepted by option <b>-test</b>. The options <b>-s</b>, <b>-n</b> are honored. The following example prints three C types, generated by the generator for return types that is part of the <b>-test ansi</b> suite. See section also TYPE GENERATORS IN LUA.</p>
+
+<pre><code>    $ quest -n 3 -s 1 -try Test.ansi.result
+    double
+    union at2 { char cv2; double bv2; float av2; }
+    double *</code></pre>
+
+</dd>
+<dt id="x-y"><i>x=y</i></dt>
+<dd>
+
+<p>An assignment (containing an <b>=</b>) is considered a Lua code chunk and is passed to the interpreter for evaluation. This is a short form for <b>-e</b> <i>x=y</i> to simplify assigning a value to a Lua variable from the command line:</p>
+
+<pre><code>    $ quest -n 3 -s 0 &#39;foo=R.oneof{R.any_int,R.any_float}&#39; -try foo
+    char
+    double
+    float</code></pre>
+
+</dd>
+<dt id="e-chunk"><b>-e</b> <i>chunk</i></dt>
+<dd>
+
+<p>Evaluate the Lua code <i>chunk</i> in the interpreter before generating test cases. This can be used to set (global) variables in the interpreter that test generators may rely on. However, <i>chunk</i> may be arbitrary code, not just assignments. This option may be repeated; chunks are evaluated from left to right.</p>
+
+</dd>
+<dt id="file.lua"><i>file</i><b>.lua</b></dt>
+<dd>
+
+<p>Load and execute <i>file.lua</i> as Lua code. Use this option to add new code generators to Quest or to override the built-in Lua code. Evaluation order is as follows: first the built-in Lua code is loaded into the interpreter and then the command line is evaluated from left to right. This honors all assignments (<i>x=y</i>), <b>-e</b> chunks, and files <i>file</i><b>.lua</b> in left-to-right order.</p>
+
+</dd>
+<dt id="lua"><b>-lua</b></dt>
+<dd>
+
+<p>Dump the built-in Lua code to stdout. This permits to inspect the Lua code that drives the application internally.</p>
+
+</dd>
+<dt id="seed-int"><b>-seed</b> <i>int</i></dt>
+<dd>
+
+<p>Use <i>int</i> to seed the pseudo-random generator. The default is to use an automatically chosen seed. A user-provided seed is useful for debugging because it leads to the same output in two different program runs. A seed may be negative.</p>
+
+<p>Each test case contains its seed as a comment. So when a test case among many in a file has failed you can create a small file with just that test case using <b>-seed</b> and <b>-n 1</b>. Of course, you have to use otherwise the same options that were used to generate the original file. These options are included as a comment at the beginning of each file.</p>
+
+<p>The seed controls the types of a test case, but not the values that are used for initializations. Two test cases generated with the same thus may differ in their values. This may change in a future version.</p>
+
+</dd>
+<dt id="h--help"><b>-h</b> | <b>-help</b></dt>
+<dd>
+
+<p>Emit help message to stdout.</p>
+
+</dd>
+<dt id="version"><b>-version</b></dt>
+<dd>
+
+<p>Emit version information to stdout.</p>
+
+</dd>
+</dl>
+
+<h1 id="SIMPLE-EXAMPLES">SIMPLE EXAMPLES</h1>
+
+<ol>
+
+<li><p></p>
+
+<pre><code>    quest &gt; t.c</code></pre>
+
+<p>Emit one test file with 20 test cases to stdout.</p>
+
+</li>
+<li><p></p>
+
+<pre><code>    quest -s 1 &gt; t.c.</code></pre>
+
+<p>Emit one test file with 20 test cases of reduced complexity to stdout.</p>
+
+</li>
+<li><p></p>
+
+<pre><code>    quest -2 -test gcc</code></pre>
+
+<p>Emit two files, <code>quest_callee.c</code> and <code>quest_main.c</code> with 20 test cases that may contain empty structs and arrays (as they are accepted by gcc(1)).</p>
+
+</li>
+<li><p></p>
+
+<pre><code>    quest -2 -o ttt -n 100</code></pre>
+
+<p>Emit two files <code>ttt_callee.c</code> and <code>ttt_main.c</code> with 100 test cases.</p>
+
+</li>
+</ol>
+
+<h1 id="ADVANCED-EXAMPLES">ADVANCED EXAMPLES</h1>
+
+<p>The command sequence below for sh(1) is a quick way to test a C compiler:</p>
+
+<pre><code>    while true; do
+        quest &gt; quest.c
+        cc -o xxx -O2 quest.c || break
+        ./xxx || break
+        echo -n .
+    done</code></pre>
+
+<p>The loop runs until either the compiler fails or the quest-generated generated code detects a bug in the compiler. The echo command is there just to indicate some progress.</p>
+
+<p>When a bug is found you can inspect the code surrounding the reported line. There you will find a <code>seed</code> number. You can use this to re-create a file with just the single test case that failed. Assuming the seed was 12345, the following command will create a file with just a single test case.</p>
+
+<pre><code>    quest -seed 12345 -n 1 &gt; quest-12345.c</code></pre>
+
+<p>It is important that you use the same options as before (with the exception of <code>-n</code> and <code>-seed</code>) to re-create a test case when using a seed.</p>
+
+<h1 id="TYPE-GENERATORS-IN-LUA">TYPE GENERATORS IN LUA</h1>
+
+<p>Quest contains an embedded interpreter for the Pascal-like scripting language Lua. It controls Quest&#39;s high-level behavior and is used to define test code generators. Instead of using the built-in Lua code, a user may supply her own code and thus new test-code generators. Before reading on it is a good idea to read the Lua 2.5 reference manual that comes with Quest, and to study the built-in Lua code, which may be obtained with <code>quest -lua</code>.</p>
+
+<p>All test cases are derived from function signatures (i.e., the return and parameter types). These are generated by scripted generators. To define a new test code generator it thus suffices to define a generator for C types.</p>
+
+<p>A generator is a Lua value, which, when run, produces a C type. A generator is built from simpler generators; the simplest generators are for scalar C types. A generator has its own type in Lua. Like tables, generators are polymorphic: a generator may produce numbers, or strings, or a mixture of both, it may even produce another generator. Most generators produce only values of one kind. Specifically, we call a type-generating generator a <i>typegen</i>, and a number-generating generator an <i>intgen</i>, and so on.</p>
+
+<pre><code>    R = Rand    -- abbreviation
+
+    -- all generators below are typegens.
+    R.char
+    R.short
+    R.int
+    R.long
+    R.longlong
+    R.float
+    R.double
+    R.longdouble</code></pre>
+
+<p>When such a generator is run (using <code>R.run</code>), it produces the corresponding (signed) type. Below is an interactive session with the Lua interpreter where we used <code>print</code> to show the result of a generator.</p>
+
+<pre><code>    $ quest -i
+    -- $Id: quest.pod 4 2006-11-09 12:02:13Z lindig $
+    -- This is Lua-ML for Quest
+    &gt; R = Rand
+    &gt; u = Uniq.make()    
+    &gt; print(R.run(R.char,u,3))
+    char
+    &gt; </code></pre>
+
+<p>A generator for an unsigned type may be derived from a generator for a signed type, using <code>R.unsigned(typegen)</code>; this works for all integer- and char-producing generators from above.</p>
+
+<pre><code>    R.unsigned(R.char)  -- typegen</code></pre>
+
+<p>A complex type is a type that has other types embedded, like arrays, structs, unions, and pointers. The generators for these types takes another generator as argument to produce the embedded type:</p>
+
+<pre><code>    R.pointer(R.char)   -- typegen</code></pre>
+
+<p>The code above is a character-pointer generator. Obviously such a generator is not very interesting, because it produces the same type in every run. Variation comes from generators that select a generator randomly from a list of generators:</p>
+
+<pre><code>    R.pointer(R.oneof {R.char, R.int, R.long}) -- typegen
+
+    &gt; print(R.run(R.pointer(R.oneof{R.char, R.int, R.long}),u,3))
+    int *
+    &gt; print(R.run(R.pointer(R.oneof{R.char, R.int, R.long}),u,3))
+    long int *
+    &gt; print(R.run(R.pointer(R.oneof{R.char, R.int, R.long}),u,3))
+    int *</code></pre>
+
+<p>The generator <code>R.oneof(typegen list)</code> takes a list of generators and selects in each run one randomly. The generator above thus generates pointers to characters, integers, and longs.</p>
+
+<p>A generator may produce values other than C types: the generator <code>R.integer(n)</code> generates a (random) integer in the range 0 to n-1. Such an <i>int_gen</i> generator is required to decide the size of an array:</p>
+
+<pre><code>    R.array(R.char, R.integer(5))</code></pre>
+
+<p>Don&#39;t confuse generator <code>R.integer</code> with generator <code>R.int</code>. The former generates a (Lua) number, the latter a (C) type.</p>
+
+<pre><code>    &gt; print(R.run(R.array(R.char, R.integer(5)),u,3))            
+    char [4]
+    &gt; print(R.run(R.array(R.char, R.integer(5)),u,3))
+    char [2]
+    &gt; print(R.run(R.array(R.char, R.integer(5)),u,3))
+    char [3]</code></pre>
+
+<p>The generator above produces character arrays of size 0 to 4. Since a size of zero is illegal in ANSI C, we also have integer generators that permit to specify a lower bound too: <code>R.choose(1,5)</code> produces an integer in the range 1 to 5 inclusive. A better generator thus would be:</p>
+
+<pre><code>    simple = R.oneof {R.char, R.int, R.unsigned(R.int)}
+    R.array(R.oneof{simple, R.choose(1,5))</code></pre>
+
+<p>Here we have assigned a generator to a variable and used it in the construction of the array generator. The is perfectly legal because a generator is a Lua value and may be assigned to a variable, passed to or returned from a function.</p>
+
+<p>By now you should have a good idea how generators are built and how to use additional generators. The generators for structs and unions take generators that produce lists of types. These are built with <code>R.list</code>, which takes two generators: one for integers, and one for types. The integer generator controls the length of the list, the type generator is used to fill the list with the appropriate number of types.</p>
+
+<pre><code>    R.union(typelistgen)   -- generate unions
+    R.struct(typelistgen)  -- generate structs
+    R.list(intgen,typegen) -- generate list of types</code></pre>
+
+<p>We are now ready to look at the definition of a real generator <code>ANSI.result</code> for the return type of a C function.</p>
+
+<pre><code>    ANSI.simple  = R.oneof {R.any_int, R.any_float }
+    ANSI.members = R.choose(1,3)
+    function ANSI.result_ (issimple)
+        if issimple then
+            return ANSI.simple
+        else 
+            return R.smaller 
+            { R.any_int
+            , R.any_float
+            , R.pointer(ANSI.result)
+            , R.struct(R.list(ANSI.members,ANSI.arg))
+            , R.union(R.list(ANSI.members,ANSI.arg))
+            }
+        end     
+    end    
+    ANSI.result = R.bind(R.iszero,ANSI.result_) -- just use it this way</code></pre>
+
+<p>A type in general is recursive and thus generators are recursive too. However, we cannot define recursive generators directly because of the eager evaluation of function arguments in Lua (and most other languages). We thus have to use a little indirection. The generator must also limit the recursion during the construction to ensure termination. Function <code>ANSI.result_</code> receives a boolean value that tells whether it should produce a simple value (and thus end recursion), or a complex value. In either case, it returns a generator.</p>
+
+<p>In the simple case, the generator returns an integer or float. (<code>R.any_int</code> and <code>R.any_float</code> are predefined.) In the complex case, the generator produces and integer, float, struct, or union, but no array because these are illegal in return types. The <code>R.smaller</code> generator ensures that the size of the generated types becomes smaller with deeper recursion.</p>
+
+<p>A test suite is a table of four generators: one for regular arguments, one used for var args, one for the result type, and one for the scope of the function under test. The scope can be static or public. Since a static function may be called using a different calling convention than a public function, some variation is useful. We use the <code>flip</code> generator for the scope, which returns a boolean value. The generator for <code>static</code> is ignored when code is emitted into two files; all functions under are declared public in this case, since they would not be visible for the caller otherwise.</p>
+
+<p>This table must be returned by a function that expects no arguments.</p>
+
+<pre><code>    function ANSI.test () return
+        { args       = R.list(R.choose(1,4),ANSI.arg)
+        , varargs    = R.list(R.unit(0),R.int)  -- var args
+        , result     = ANSI.result
+        , static     = R.flip -- generates bool
+        }
+    end    </code></pre>
+
+<p>The generator for parameter lists uses the <code>ANSI.arg</code> generator for each parameter (which we haven&#39;t shown); it used to produce a list of parameters, where the list contains between 1 and 4 parameter types. The list for var args always has zero elements and the generator for the result type is the one defined above.</p>
+
+<p>To make a generator accessible for the <b>-test</b> command line option, it must be placed into the <code>Test</code> table. The generator above is thus available as <b>-test ansi</b>.</p>
+
+<pre><code>    Test.ansi = 
+        { doc   = &quot;ANSI C, but no var args&quot;
+        , test  = ANSI.test
+        }</code></pre>
+
+<p>To see the actual Lua code used in Quest, use <code>quest -lua</code> that dumps it to stdout. To add your own code, write it into a file <code>my.lua</code> and pass this file as <code>quest my.lua</code> to Quest. For a start, it is a good idea to extract the code in the <code>Demo</code> table from the <code>Quest -lua</code> output, to modify it, and to pass it back into the interpreter on the command line.</p>
+
+<h1 id="VAR-ARGS">VAR ARGS</h1>
+
+<p>A function using varargs must have at least one regular argument (c.f. the documentation for <b>stdarg.h</b>); all test cases violating this requirement are dropped with a warning. The var args generator for the <code>ansi</code> generator is <code>Test.ansi.test.varargs</code>, the corresponding generator <code>Test.ansi.test.args</code> for regular arguments thus must be defined to produce at least a list of length one.</p>
+
+<h1 id="PRIMITIVE-GENERATORS">PRIMITIVE GENERATORS</h1>
+
+<p>This section lists the primitive and complex generators that are built into Quest and which can be used to define new generators. The following generators are in Table <code>Rand</code> (which we abbreviated above as <code>R</code>).</p>
+
+<pre><code>    unit(value)             -- generator that always returns value
+    bind(gen,function)      -- give function access to value from gen
+    run(gen,uniq,number)    -- run generator, asking for for result of size
+    smaller(gen list)       -- select gen from list, ask for smaller size
+    iszero                  -- boolean generator, signals end of recursion
+
+    flip                    -- bool generator
+    integer(number)         -- integer generator, range 0 .. number-1
+    choose(number,number)   -- integer generator, range low .. high
+    elements(value list)    -- generator producing value from list
+    oneof(gen list)         -- generator selecting generator from list
+    list(intgen, gen)       -- generate list (length by intgen) using gen
+    freq(pairs)             -- see below
+    concat(gen list)        -- takes list of list-generating generators
+                               and builds a single list-generating generator
+
+    char                    -- C char generator
+    short                   -- C short generator
+    int                     -- C int generator
+    long                    -- C long generator
+    longlong                -- C longlong generator
+    bitfield(intgen)        -- C bitfield of given width
+
+    unsigned(typegen)       -- generate unsigned values
+
+    float                   -- C float generator
+    double                  -- C double generator
+    longdouble              -- C long double generator
+    any_int                 -- generates an int type
+    any_float               -- generates a float type
+
+    array(typegen,intgen)   -- C array of intgen length
+    pointer(typegen)        -- C pointer type generator 
+    struct(typelistgen)     -- C struct type generator (intgen members)
+    union(typelistgen)      -- C union type generator  (intgen members) </code></pre>
+
+<p>Note that bitfields are legal only as part of a structure or union.</p>
+
+<p>Generators like <code>oneof</code> or <code>elements</code> select generators or values from a list with equal probability. The <code>freq</code> generator permits to specify a biased choice:</p>
+
+<pre><code>    R.freq 
+        { 1, char
+        , 3, int
+        , 5, float
+        }</code></pre>
+
+<p>It takes a list of integer/generator pairs. The integer defines a weight for the choice; hence, the <code>float</code> generator is chosen 5 out of 9 times (1+3+5=9).</p>
+
+<p>Function <code>run</code> is used mostly internally; it takes a name generator and a size as arguments, where the size defines the maximum depth of a type. This size is the same that is also specified on the command line. A generator for unique names is returned by <code>Uniq.make()</code>.</p>
+
+<p>Function <code>bind</code> is also used mostly internally. It gives a function access to a value a generator has produced when the generator is run. This was used in the example above to give the <code>Ansi.result_</code> function access to the result of <code>iszero</code>. Once <code>iszero</code> produces true in a run, recursion must stop.</p>
+
+<p>The ultimate resource for the list of available generators and other primitive Lua functions is the source code of Quest&#39;s implementation: module <i>lualink.nw</i>.</p>
+
+<h1 id="THE-GENERATED-CODE">THE GENERATED CODE</h1>
+
+<p>A file generated by <b>quest</b> typically contains a number of test cases. Each test case defines some possibly complex global variables. These are automatically initialized with random values using C initializers .</p>
+
+<pre><code>    int x0 = 5;
+    int x1[2] = {38, 2};
+    struct s {
+        char c;
+        int  i;
+    } x2 = { &#39;c&#39;, 77 };</code></pre>
+
+<p>A generated function with corresponding parameters expects these variables to be passed; the body of the function checks that the values actually passed are indeed the ones expected.</p>
+
+<pre><code>    void f(int a0, int a1[2], struct s a2)
+    {
+        if (a0 != x0) failed(__LINE__);
+        if (a1[0] != x1[0]) failed(__LINE__);
+        if (a1[1] != x1[1]) failed(__LINE__);
+        if (a2.c != x2.c) failed(__LINE__);
+        if (a2.i != x2.i) failed(__LINE__);
+    }</code></pre>
+
+<p>If the function finds an unexpected value passed in a parameter, it calls <code>failed()</code>. The <code>failed()</code> function emits an error message indicating the file and line number of the error.</p>
+
+<p>For each function <code>f</code>, a corresponding function <code>g</code> is generated that passes the global variables by value to <code>f()</code>.</p>
+
+<pre><code>    void g(void)
+    {
+        f(a0,a1,a2);
+    }</code></pre>
+
+<p>This function is called by the <code>main()</code> function when the test is run. The <code>main()</code> function therefore just contains as many calls as there are test cases in a file.</p>
+
+<p>When the code is distributed over two files, <code>f()</code> and <code>g()</code> reside in two different files; variable and function declarations as necessary are declared to make the different parts known to each other.</p>
+
+<p>The code above just illustrates the principle; the real code generated uses less readable names to avoid name clashes.</p>
+
+<p>The complexity of the types for global variables can be controlled by the <b>-s</b> flag. However, the exact distribution of types is currently hard-coded into <b>quest</b>.</p>
+
+<h1 id="EXIT-CODE">EXIT CODE</h1>
+
+<p>Upon successful execution, <b>quest</b> exists with exit code <code>0</code>. Wrong usage leads to a positive error code, internal errors to a negative error code.</p>
+
+<p>The generated code contains a <code>main</code> function that returns the number or errors found; hence it returns <code>0</code> for a successful test and a positive number if it finds bugs.</p>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>When something goes wrong while executing Lua code, the Lua interpreter emits a stack trace. From this it is sometimes difficult to figure out the problem.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Please send feedback, bug reports, and experience reports to the author: Christian Lindig &lt;lindig@cs.uni-sb.de&gt; <a href="http://www.st.cs.uni-sb.de/~lindig/">http://www.st.cs.uni-sb.de/~lindig/</a></p>
+
+<p>The Lua-ML interpreter was implemented by Norman Ramsey &lt;nr@eecs.harvard.edu&gt; and is available from <a href="http://www.cminusminus.org/">http://www.cminusminus.org/</a>. The Lua language was designed and implemented by Roberto Ierusalimschy et al.; a C implementation of Lua is available from <a href="http://www.lua.org/">http://www.lua.org/</a></p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright (c) 2004, 2005 Christian Lindig &lt;lindig@eecs.harvard.edu&gt;. All rights reserved.</p>
+
+<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
+
+<ol>
+
+<li><p>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</p>
+
+</li>
+<li><p>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</p>
+
+</li>
+</ol>
+
+<p>THIS SOFTWARE IS PROVIDED ``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR AND COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<pre><code> $Id: quest.pod 4 2006-11-09 12:02:13Z lindig $</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p>cc(1), gcc(1), <a href="http://www.lua.org/">http://www.lua.org/</a>, Lua 2.5 reference manual, sh(1)</p>
+
+
+</body>
+
+</html>
+
+

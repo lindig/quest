@@ -37,7 +37,7 @@ module C = Cee
 
 <<Helper functions>>=
 let (@@) f x    = f x
-let (<<) f g x  = f (g x)
+let (@<<) f g x  = f (g x)
 
 let group       = P.group 
 let nest        = P.nest 4
@@ -279,7 +279,7 @@ let rec stmt = function
     | C.Nop             -> empty
     | _                 -> failwith "stmt: not implemented"
 
-and stmts ss = group (list break (group << stmt) ss)
+and stmts ss = group (list break (group @<< stmt) ss)
 @
 
 \paragraph{Function Definition}

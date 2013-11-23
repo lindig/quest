@@ -86,14 +86,14 @@ are represented by [[pos]].  A continuous region in the input
 stream consists of the first character in the span and the first one
 following it.
 
-<<srcmap.mli>>=
+<<luasrcmap.mli>>=
 type pos            = int
 type rgn            = pos * pos
 @
 The [[null]] region is sometimes used a special value when no real
 region information is available.
 
-<<srcmap.mli>>=
+<<luasrcmap.mli>>=
 val null            : rgn
 @
 
@@ -104,7 +104,7 @@ danger of confusing lines and columns because they share the same
 type.  Records avoid this but have other drawbacks:  labels must be
 unique which leads to long names and ugly pattern matching.
 
-<<srcmap.mli>>=
+<<luasrcmap.mli>>=
 type location       = string    (* file   *)
                     * int       (* line   *)
                     * int       (* column *)
@@ -114,7 +114,7 @@ representation.  A source map should never be empty but should contain
 a synchronization point for [[pos]] 0.  The [[mk]] function returns an
 empty source map for a file.
 
-<<srcmap.mli>>=
+<<luasrcmap.mli>>=
 type map
 val mk:             unit -> map (* empty map *)
 @
@@ -127,34 +127,34 @@ same file as the previous sync point and advances one line.  The
 line.  Another common case are tab characters which we currently
 ignore.
 
-<<srcmap.mli>>=
+<<luasrcmap.mli>>=
 val sync :          map -> pos -> location -> unit
 val nl :            map -> pos -> unit
 @
 [[last]] returns the location of the last sync point. It is useful
 to get the current file name and line number.
 
-<<srcmap.mli>>=
+<<luasrcmap.mli>>=
 val last :          map -> location
 @
 The corresponding location for a position can be obtained with
 [[location]].  For debugging a source map can be dumped to stdout
 using [[dump]]. 
 
-<<srcmap.mli>>=
+<<luasrcmap.mli>>=
 val location :      map -> pos -> location
 val dump:           map -> unit
 @
 To make positions meaningful they can be bundled with a source map
 that keeps track of their origins. 
 
-<<srcmap.mli>>=
+<<luasrcmap.mli>>=
 type point          = map * pos
 type region         = map * rgn
 @
 The [[Str]] module provides string representations for points and regions.
 
-<<srcmap.mli>>=
+<<luasrcmap.mli>>=
 module Str:
 sig
     val point       : point  -> string
@@ -171,13 +171,13 @@ code and at least as many synchronization points. An implementation
 should thus pay attention to memory requirements and run time
 performance. 
 
-<<srcmap.ml>>=
+<<luasrcmap.ml>>=
 type pos            = int
 type rgn            = pos * pos
 type location       = string    (* file   *)
                     * int       (* line   *)
                     * int       (* column *)
-<<srcmap.ml>>=
+<<luasrcmap.ml>>=
 let null = (0,0)
 @
 
@@ -185,7 +185,7 @@ A [[syncpoint]] associates a [[pos]] with a [[location]]. To
 lower memory requirements a bit this could be also defined as a
 quadruple. 
 
-<<srcmap.ml>>=
+<<luasrcmap.ml>>=
 type syncpoint      = pos * location
 @
 
@@ -209,7 +209,7 @@ goes into the array.  Although it looks like the one from the location
 it is a different one that is shared among all sync points using this
 name.
 
-<<srcmap.ml>>=
+<<luasrcmap.ml>>=
 type map =          { mutable points:       syncpoint array 
                     ; mutable top:          int
                     ; files :               (string, string) Hashtbl.t
@@ -223,11 +223,11 @@ in the [[points]] array.  In \ocaml~every array cell must be
 initialized upon creation.  We use [[undefined]] for this.  The
 initial size of the array is [[size]].
 
-<<srcmap.ml>>=
+<<luasrcmap.ml>>=
 let size        =  2    (* small to test alloc *)
 let undefined   =  (0, ("undefined", -1, -1))    
 
-<<srcmap.ml>>=
+<<luasrcmap.ml>>=
 let mk () =
     { points  = Array.create size undefined 
     ; top     = 0
@@ -240,7 +240,7 @@ least space for the next sync point.  In case the array is full it
 copies the existing array into a new one, twice of the size of the
 old. 
 
-<<srcmap.ml>>=
+<<luasrcmap.ml>>=
 
 let alloc srcmap =
     let length = Array.length srcmap.points in
@@ -257,7 +257,7 @@ is replaced by an instance that comes from the hash table and is
 shared by many sync points.  We check also for the increasing order of
 positions.
 
-<<srcmap.ml>>=
+<<luasrcmap.ml>>=
 let sync srcmap pos (file,line,col) =
     let _     = alloc srcmap in
     let file' = try  Hashtbl.find srcmap.files file
@@ -276,7 +276,7 @@ let sync srcmap pos (file,line,col) =
 [[last]] returns the location of the last sync point. It is useful
 to get the current file name and line number.
 
-<<srcmap.ml>>=
+<<luasrcmap.ml>>=
 let last map =
     ( assert (map.top > 0 && map.top <= Array.length map.points)
     ; snd map.points.(map.top-1)
@@ -301,7 +301,7 @@ let nl map pos =
         sync map pos (file, line+1, 1)
 @
 
-<<srcmap.ml>>=
+<<luasrcmap.ml>>=
 let nl srcmap pos =
     let _               = alloc srcmap  in
     let (file, line, _) = last srcmap   in
@@ -316,7 +316,7 @@ let nl srcmap pos =
 Function [[cmp]] compares a [[pos]] with a [[(pos,location)]]
 pair; the [[pos]] is the one we like to find in the array.
 
-<<srcmap.ml>>=
+<<luasrcmap.ml>>=
 let cmp x (y,_) = compare x y
 @
 
@@ -326,7 +326,7 @@ We expect that the array is not empty when it is used and secure this
 by an assertion.  Only the first [[length]] entries are searched in
 the array.
 
-<<srcmap.ml>>=
+<<luasrcmap.ml>>=
 let search x array length cmp =
     let rec loop left right =
         if left > right then
@@ -356,7 +356,7 @@ which gives us a location.  The actual location is possibly to the
 right of this point:  we simply have to add the missing columns to go
 there.
 
-<<srcmap.ml>>=
+<<luasrcmap.ml>>=
 let location map pos =
     let pos',(file,line,col) = search pos map.points map.top cmp in
     (file,line,pos - pos' + col)
@@ -365,7 +365,7 @@ let location map pos =
 To aid debugging we provide a function [[dump]] to write the
 contents of a [[srcmap]] to stdout.
 
-<<srcmap.ml>>=
+<<luasrcmap.ml>>=
 let dump map =
     let point (pos,(file,line,col)) = 
         Printf.printf "%5d: %-32s %4d %3d\n" pos file line col
@@ -378,7 +378,7 @@ let dump map =
 For reporting locations to the user they must be available as
 strings. The [[Str]] module provides conversions.
 
-<<srcmap.ml>>=
+<<luasrcmap.ml>>=
 module Str = struct
     let point  (map,pos) =
       let (file,line,column) = location map pos in
