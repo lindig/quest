@@ -35,7 +35,7 @@ SRC += util.ml
 SRC += util.mli
 
 # -- high-level targets
-.PHONY:	    all doc clean pdf test
+.PHONY:	    all src clean 
 
 all:	    src
 
@@ -58,12 +58,13 @@ quest.man:  $(TOP)/doc/quest.pod
 
 # -- Lua source files. Order is important!
 
-LUACODE	=   ../share/quest.lua	\
-	    ../share/ansi.lua	\
-	    ../share/cc.lua	\
-	    ../share/gcc.lua	\
-	    ../share/mips.lua	\
-	    ../share/demo.lua	\
+LUACODE	=   
+LUACODE +=  $(TOP)/share/quest.lua	
+LUACODE +=  $(TOP)/share/ansi.lua
+LUACODE +=  $(TOP)/share/cc.lua
+LUACODE +=  $(TOP)/share/gcc.lua
+LUACODE +=  $(TOP)/share/mips.lua
+LUACODE +=  $(TOP)/share/demo.lua
 
 luacode.ml: quest.man Makefile $(LUACODE)
 	    echo 'let quest = "'		    >  $@
