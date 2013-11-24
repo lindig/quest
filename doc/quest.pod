@@ -4,7 +4,7 @@
 
 =head1 NAME
 
-quest -- extensible test-code generator for C compilers
+quest -- generate test cases for C compilers
 
 =head1 SYNOPSIS
 
@@ -18,9 +18,9 @@ B<quest -list|-lua|-man|-help|-version>
 
 Quest generates random C code to tests the parameter passing
 implementation of a C compiler. When generated code is compiled and
-executed, it checks that the values passed are actually the ones that
-are expected. The generated code signals an error to stdout when it
-finds parameter-passing bugs. 
+executed, it checks that the values passed to a function are actually the
+ones that are expected. The generated code signals an error to stdout when
+it finds parameter-passing bugs. 
 
 Quest can emit code into one or two C source files. Two files may be
 compiled by different compilers to check their interoperability.  When
@@ -589,18 +589,19 @@ out the problem.
 =head1 AUTHOR
 
 Please send feedback, bug reports, and experience reports to the author:
-Christian Lindig <lindig@cs.uni-sb.de>
-L<http://www.st.cs.uni-sb.de/~lindig/>
+Christian Lindig <lindig@gmail.com>
+
+The source code is available from GitHub: L<https://github.com/lindig/quest>
 
 The Lua-ML interpreter was implemented by Norman Ramsey
 <nr@eecs.harvard.edu> and is available from
-L<http://www.cminusminus.org/>. The Lua language was designed and
-implemented by Roberto Ierusalimschy et al.; a C implementation of Lua
-is available from L<http://www.lua.org/>
+L<http://www.cminusminus.org/> and L<https://github.com/lindig/lua-ml>. The
+Lua language was designed and implemented by Roberto Ierusalimschy et al.;
+a C implementation of Lua is available from L<http://www.lua.org/>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2004, 2005 Christian Lindig <lindig@eecs.harvard.edu>. All
+Copyright (c) 2004 - 2013 Christian Lindig <lindig@gmail.com>. All
 rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -635,10 +636,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
-
-=head1 VERSION
-
- $Id: quest.pod 4 2006-11-09 12:02:13Z lindig $
 
 =head1 SEE ALSO 
 
