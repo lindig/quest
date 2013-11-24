@@ -73,6 +73,6 @@ luacode.ml: quest.man Makefile $(LUACODE)
 	    echo 'let manual = "'		    >> $@
 	    sed 's/\\/\\\\/g;s/"/\\"/g' quest.man   >> $@
 	    echo '"'				    >> $@
-	    echo 'let date = "$(DATE)"'		    >> $@
+	    echo 'let date = "'`date`'"'	    >> $@
 
 
