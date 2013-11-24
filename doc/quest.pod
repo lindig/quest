@@ -1,5 +1,5 @@
 #
-# $Id: quest.pod 4 2006-11-09 12:02:13Z lindig $
+# 
 #
 
 =head1 NAME
@@ -12,7 +12,7 @@ B<quest> [B<-test> I<test>] [B<-n> I<number>] [B<-s> I<depth>]
 [B<-1>|B<-2>] [B<-o> I<basename>] [B<-i>] [B<-e> I<Lua chunk>]
 [I<x=y>] [I<file>B<.lua>] [B<-seed> I<number>]
 
-B<quest -list|-lua|-man|-help|-version>
+B<quest> B<-list> | B<-lua> | B<-man> | B<-help> | B<-version>
 
 =head1 DESCRIPTION
 
