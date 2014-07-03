@@ -1,3 +1,5 @@
 *.native
 /src/*.ml*
 /lua-ml/*.ml*
+
+/src/quest.man
