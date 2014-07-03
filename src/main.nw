@@ -114,7 +114,8 @@ let synopsis this =
     ; "-man             emit manual page to stdout (contains LICENSE)"
     ; "-version         identify version of this tool on stdout"
     ; ""
-    ; "Author: Christian Lindig http://www.st.cs.uni-sb.de/~lindig/"
+    ; "Author: Christian Lindig <lindig@gmail.com>"
+    ; "https://code.google.com/p/quest-tester/"
     ]
     
 let usage this msg =
