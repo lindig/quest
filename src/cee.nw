@@ -290,6 +290,13 @@ let include_headers prg =
     (* let prg = CPP("#include <assert.h>") :: prg in
      *)
     let h   = headers prg in
-    let prg = if h.stdarg then CPP("#include <stdarg.h>") :: prg else prg in
+    let prg = if h.stdarg then 
+                   CPP "#include <stdio.h>"
+                :: CPP "#include <stdarg.h>" 
+                :: prg 
+              else   
+                   CPP "#include <stdio.h>"
+                :: prg 
+    in             
         prg
     

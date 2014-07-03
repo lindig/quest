@@ -374,8 +374,8 @@ Finally, [[emit]] formats the code and emits it to
 <<Standalone>>=
 let emit channel ts =
     let code, callers = List.split (List.map testcase ts) in
-    let prog = header 
-            :: errors C.Static 
+    let prog = (* header 
+            :: *) errors C.Static 
             :: C.Function(failed)  
             :: List.concat code 
              @ [C.Function(main callers)] in
