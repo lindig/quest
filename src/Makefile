@@ -65,6 +65,7 @@ LUACODE +=  $(TOP)/share/cc.lua
 LUACODE +=  $(TOP)/share/gcc.lua
 LUACODE +=  $(TOP)/share/mips.lua
 LUACODE +=  $(TOP)/share/demo.lua
+LUACODE +=  $(TOP)/share/toy.lua
 
 luacode.ml: quest.man Makefile $(LUACODE)
 	    echo 'let quest = "'		    >  $@
