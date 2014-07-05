@@ -1,0 +1,250 @@
+### Starting build.
+# Target: src/main.ml.depends, tags: { extension:ml, file:src/main.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/main.ml > src/main.ml.depends
+# Target: src/main.mli.depends, tags: { extension:mli, file:src/main.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/main.mli > src/main.mli.depends # cached
+# Target: src/main.cmi, tags: { byte, compile, extension:mli, file:src/main.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I src -I lua-ml -o src/main.cmi src/main.mli # cached
+# Target: src/luacode.ml.depends, tags: { extension:ml, file:src/luacode.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/luacode.ml > src/luacode.ml.depends # cached
+# Target: src/luacode.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:src/luacode.cmo, file:src/luacode.ml, implem, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I src -I lua-ml -o src/luacode.cmo src/luacode.ml # cached
+# Target: src/luacode.cmx, tags: { compile, extension:cmx, extension:ml, file:src/luacode.cmx, file:src/luacode.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I src -I lua-ml -o src/luacode.cmx src/luacode.ml # cached
+# Target: lua-ml/lualink.ml.depends, tags: { extension:ml, file:lua-ml/lualink.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/lualink.ml > lua-ml/lualink.ml.depends # cached
+# Target: lua-ml/lualink.mli.depends, tags: { extension:mli, file:lua-ml/lualink.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/lualink.mli > lua-ml/lualink.mli.depends # cached
+# Target: lua-ml/lua.mli.depends, tags: { extension:mli, file:lua-ml/lua.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/lua.mli > lua-ml/lua.mli.depends # cached
+# Target: lua-ml/luaast.mli.depends, tags: { extension:mli, file:lua-ml/luaast.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luaast.mli > lua-ml/luaast.mli.depends # cached
+# Target: lua-ml/luavalue.mli.depends, tags: { extension:mli, file:lua-ml/luavalue.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luavalue.mli > lua-ml/luavalue.mli.depends # cached
+# Target: lua-ml/luahash.mli.depends, tags: { extension:mli, file:lua-ml/luahash.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luahash.mli > lua-ml/luahash.mli.depends # cached
+# Target: lua-ml/luahash.cmi, tags: { byte, compile, extension:mli, file:lua-ml/luahash.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I lua-ml -I src -o lua-ml/luahash.cmi lua-ml/luahash.mli # cached
+# Target: lua-ml/luasrcmap.mli.depends, tags: { extension:mli, file:lua-ml/luasrcmap.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luasrcmap.mli > lua-ml/luasrcmap.mli.depends # cached
+# Target: lua-ml/luasrcmap.cmi, tags: { byte, compile, extension:mli, file:lua-ml/luasrcmap.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I lua-ml -I src -o lua-ml/luasrcmap.cmi lua-ml/luasrcmap.mli # cached
+# Target: lua-ml/luavalue.cmi, tags: { byte, compile, extension:mli, file:lua-ml/luavalue.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I lua-ml -I src -o lua-ml/luavalue.cmi lua-ml/luavalue.mli # cached
+# Target: lua-ml/luaast.cmi, tags: { byte, compile, extension:mli, file:lua-ml/luaast.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I lua-ml -I src -o lua-ml/luaast.cmi lua-ml/luaast.mli # cached
+# Target: lua-ml/luaparser.mli.depends, tags: { extension:mli, file:lua-ml/luaparser.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luaparser.mli > lua-ml/luaparser.mli.depends # cached
+# Target: lua-ml/luaparser.cmi, tags: { byte, compile, extension:mli, file:lua-ml/luaparser.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I lua-ml -I src -o lua-ml/luaparser.cmi lua-ml/luaparser.mli # cached
+# Target: lua-ml/lua.cmi, tags: { byte, compile, extension:mli, file:lua-ml/lua.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I lua-ml -I src -o lua-ml/lua.cmi lua-ml/lua.mli # cached
+# Target: lua-ml/lualink.cmi, tags: { byte, compile, extension:mli, file:lua-ml/lualink.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I lua-ml -I src -o lua-ml/lualink.cmi lua-ml/lualink.mli # cached
+# Target: src/cee.ml.depends, tags: { extension:ml, file:src/cee.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/cee.ml > src/cee.ml.depends # cached
+# Target: src/cee.mli.depends, tags: { extension:mli, file:src/cee.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/cee.mli > src/cee.mli.depends # cached
+# Target: src/cee.cmi, tags: { byte, compile, extension:mli, file:src/cee.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I src -I lua-ml -o src/cee.cmi src/cee.mli # cached
+# Target: src/cee.cmx, tags: { compile, extension:cmx, extension:ml, file:src/cee.cmx, file:src/cee.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I src -I lua-ml -o src/cee.cmx src/cee.ml # cached
+# Target: src/emit.ml.depends, tags: { extension:ml, file:src/emit.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/emit.ml > src/emit.ml.depends # cached
+# Target: src/emit.mli.depends, tags: { extension:mli, file:src/emit.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/emit.mli > src/emit.mli.depends # cached
+# Target: src/tc.mli.depends, tags: { extension:mli, file:src/tc.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/tc.mli > src/tc.mli.depends # cached
+# Target: src/strategy.mli.depends, tags: { extension:mli, file:src/strategy.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/strategy.mli > src/strategy.mli.depends # cached
+# Target: src/rtype.mli.depends, tags: { extension:mli, file:src/rtype.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/rtype.mli > src/rtype.mli.depends # cached
+# Target: src/randomize.mli.depends, tags: { extension:mli, file:src/randomize.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/randomize.mli > src/randomize.mli.depends # cached
+# Target: src/randomize.cmi, tags: { byte, compile, extension:mli, file:src/randomize.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I src -I lua-ml -o src/randomize.cmi src/randomize.mli # cached
+# Target: src/unique.mli.depends, tags: { extension:mli, file:src/unique.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/unique.mli > src/unique.mli.depends # cached
+# Target: src/unique.cmi, tags: { byte, compile, extension:mli, file:src/unique.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I src -I lua-ml -o src/unique.cmi src/unique.mli # cached
+# Target: src/rtype.cmi, tags: { byte, compile, extension:mli, file:src/rtype.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I src -I lua-ml -o src/rtype.cmi src/rtype.mli # cached
+# Target: src/strategy.cmi, tags: { byte, compile, extension:mli, file:src/strategy.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I src -I lua-ml -o src/strategy.cmi src/strategy.mli # cached
+# Target: src/tc.cmi, tags: { byte, compile, extension:mli, file:src/tc.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I src -I lua-ml -o src/tc.cmi src/tc.mli # cached
+# Target: src/emit.cmi, tags: { byte, compile, extension:mli, file:src/emit.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I src -I lua-ml -o src/emit.cmi src/emit.mli # cached
+# Target: src/ppcee.ml.depends, tags: { extension:ml, file:src/ppcee.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/ppcee.ml > src/ppcee.ml.depends # cached
+# Target: src/ppcee.mli.depends, tags: { extension:mli, file:src/ppcee.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/ppcee.mli > src/ppcee.mli.depends # cached
+# Target: src/pretty.mli.depends, tags: { extension:mli, file:src/pretty.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/pretty.mli > src/pretty.mli.depends # cached
+# Target: src/pretty.cmi, tags: { byte, compile, extension:mli, file:src/pretty.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I src -I lua-ml -o src/pretty.cmi src/pretty.mli # cached
+# Target: src/ppcee.cmi, tags: { byte, compile, extension:mli, file:src/ppcee.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I src -I lua-ml -o src/ppcee.cmi src/ppcee.mli # cached
+# Target: src/pretty.ml.depends, tags: { extension:ml, file:src/pretty.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/pretty.ml > src/pretty.ml.depends # cached
+# Target: src/pretty.cmx, tags: { compile, extension:cmx, extension:ml, file:src/pretty.cmx, file:src/pretty.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I src -I lua-ml -o src/pretty.cmx src/pretty.ml # cached
+# Target: src/ppcee.cmx, tags: { compile, extension:cmx, extension:ml, file:src/ppcee.cmx, file:src/ppcee.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I src -I lua-ml -o src/ppcee.cmx src/ppcee.ml # cached
+# Target: src/tc.ml.depends, tags: { extension:ml, file:src/tc.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/tc.ml > src/tc.ml.depends # cached
+# Target: src/prg.ml.depends, tags: { extension:ml, file:src/prg.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/prg.ml > src/prg.ml.depends # cached
+# Target: src/prg.mli.depends, tags: { extension:mli, file:src/prg.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/prg.mli > src/prg.mli.depends # cached
+# Target: src/prg.cmi, tags: { byte, compile, extension:mli, file:src/prg.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I src -I lua-ml -o src/prg.cmi src/prg.mli # cached
+# Target: src/prg.cmx, tags: { compile, extension:cmx, extension:ml, file:src/prg.cmx, file:src/prg.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I src -I lua-ml -o src/prg.cmx src/prg.ml # cached
+# Target: src/randinit.ml.depends, tags: { extension:ml, file:src/randinit.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/randinit.ml > src/randinit.ml.depends # cached
+# Target: src/randinit.mli.depends, tags: { extension:mli, file:src/randinit.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/randinit.mli > src/randinit.mli.depends # cached
+# Target: src/randinit.cmi, tags: { byte, compile, extension:mli, file:src/randinit.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I src -I lua-ml -o src/randinit.cmi src/randinit.mli # cached
+# Target: src/randinit.cmx, tags: { compile, extension:cmx, extension:ml, file:src/randinit.cmx, file:src/randinit.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I src -I lua-ml -o src/randinit.cmx src/randinit.ml # cached
+# Target: src/randomize.ml.depends, tags: { extension:ml, file:src/randomize.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/randomize.ml > src/randomize.ml.depends # cached
+# Target: src/randomize.cmx, tags: { compile, extension:cmx, extension:ml, file:src/randomize.cmx, file:src/randomize.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I src -I lua-ml -o src/randomize.cmx src/randomize.ml # cached
+# Target: src/rtype.ml.depends, tags: { extension:ml, file:src/rtype.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/rtype.ml > src/rtype.ml.depends # cached
+# Target: src/unique.ml.depends, tags: { extension:ml, file:src/unique.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/unique.ml > src/unique.ml.depends # cached
+# Target: src/unique.cmx, tags: { compile, extension:cmx, extension:ml, file:src/unique.cmx, file:src/unique.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I src -I lua-ml -o src/unique.cmx src/unique.ml # cached
+# Target: src/rtype.cmx, tags: { compile, extension:cmx, extension:ml, file:src/rtype.cmx, file:src/rtype.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I src -I lua-ml -o src/rtype.cmx src/rtype.ml # cached
+# Target: src/strategy.ml.depends, tags: { extension:ml, file:src/strategy.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/strategy.ml > src/strategy.ml.depends # cached
+# Target: src/strategy.cmx, tags: { compile, extension:cmx, extension:ml, file:src/strategy.cmx, file:src/strategy.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I src -I lua-ml -o src/strategy.cmx src/strategy.ml # cached
+# Target: src/tc.cmx, tags: { compile, extension:cmx, extension:ml, file:src/tc.cmx, file:src/tc.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I src -I lua-ml -o src/tc.cmx src/tc.ml # cached
+# Target: src/util.ml.depends, tags: { extension:ml, file:src/util.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/util.ml > src/util.ml.depends # cached
+# Target: src/util.mli.depends, tags: { extension:mli, file:src/util.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules src/util.mli > src/util.mli.depends # cached
+# Target: src/util.cmi, tags: { byte, compile, extension:mli, file:src/util.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I src -I lua-ml -o src/util.cmi src/util.mli # cached
+# Target: src/util.cmx, tags: { compile, extension:cmx, extension:ml, file:src/util.cmx, file:src/util.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I src -I lua-ml -o src/util.cmx src/util.ml # cached
+# Target: src/emit.cmx, tags: { compile, extension:cmx, extension:ml, file:src/emit.cmx, file:src/emit.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I src -I lua-ml -o src/emit.cmx src/emit.ml # cached
+# Target: lua-ml/lua.ml.depends, tags: { extension:ml, file:lua-ml/lua.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/lua.ml > lua-ml/lua.ml.depends # cached
+# Target: lua-ml/luaast.ml.depends, tags: { extension:ml, file:lua-ml/luaast.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luaast.ml > lua-ml/luaast.ml.depends # cached
+# Target: lua-ml/luavalue.ml.depends, tags: { extension:ml, file:lua-ml/luavalue.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luavalue.ml > lua-ml/luavalue.ml.depends # cached
+# Target: lua-ml/luafloat.mll, tags: { extension:mll, file:lua-ml/luafloat.mll, lexer, ocaml, ocamllex, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamllex.opt -q lua-ml/luafloat.mll # cached
+# Target: lua-ml/luafloat.ml.depends, tags: { extension:ml, file:lua-ml/luafloat.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luafloat.ml > lua-ml/luafloat.ml.depends # cached
+# Target: lua-ml/luafloat.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:lua-ml/luafloat.cmo, file:lua-ml/luafloat.ml, implem, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I lua-ml -I src -o lua-ml/luafloat.cmo lua-ml/luafloat.ml # cached
+# Target: lua-ml/luafloat.cmx, tags: { compile, extension:cmx, extension:ml, file:lua-ml/luafloat.cmx, file:lua-ml/luafloat.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I lua-ml -I src -o lua-ml/luafloat.cmx lua-ml/luafloat.ml # cached
+# Target: lua-ml/luahash.ml.depends, tags: { extension:ml, file:lua-ml/luahash.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luahash.ml > lua-ml/luahash.ml.depends # cached
+# Target: lua-ml/luahash.cmx, tags: { compile, extension:cmx, extension:ml, file:lua-ml/luahash.cmx, file:lua-ml/luahash.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I lua-ml -I src -o lua-ml/luahash.cmx lua-ml/luahash.ml # cached
+# Target: lua-ml/luasrcmap.ml.depends, tags: { extension:ml, file:lua-ml/luasrcmap.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luasrcmap.ml > lua-ml/luasrcmap.ml.depends # cached
+# Target: lua-ml/luasrcmap.cmx, tags: { compile, extension:cmx, extension:ml, file:lua-ml/luasrcmap.cmx, file:lua-ml/luasrcmap.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I lua-ml -I src -o lua-ml/luasrcmap.cmx lua-ml/luasrcmap.ml # cached
+# Target: lua-ml/luavalue.cmx, tags: { compile, extension:cmx, extension:ml, file:lua-ml/luavalue.cmx, file:lua-ml/luavalue.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I lua-ml -I src -o lua-ml/luavalue.cmx lua-ml/luavalue.ml # cached
+# Target: lua-ml/luaast.cmx, tags: { compile, extension:cmx, extension:ml, file:lua-ml/luaast.cmx, file:lua-ml/luaast.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I lua-ml -I src -o lua-ml/luaast.cmx lua-ml/luaast.ml # cached
+# Target: lua-ml/luabaselib.ml.depends, tags: { extension:ml, file:lua-ml/luabaselib.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luabaselib.ml > lua-ml/luabaselib.ml.depends # cached
+# Target: lua-ml/luabaselib.mli.depends, tags: { extension:mli, file:lua-ml/luabaselib.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luabaselib.mli > lua-ml/luabaselib.mli.depends # cached
+# Target: lua-ml/luainterp.mli.depends, tags: { extension:mli, file:lua-ml/luainterp.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luainterp.mli > lua-ml/luainterp.mli.depends # cached
+# Target: lua-ml/lualib.mli.depends, tags: { extension:mli, file:lua-ml/lualib.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/lualib.mli > lua-ml/lualib.mli.depends # cached
+# Target: lua-ml/lualib.cmi, tags: { byte, compile, extension:mli, file:lua-ml/lualib.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I lua-ml -I src -o lua-ml/lualib.cmi lua-ml/lualib.mli # cached
+# Target: lua-ml/luainterp.cmi, tags: { byte, compile, extension:mli, file:lua-ml/luainterp.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I lua-ml -I src -o lua-ml/luainterp.cmi lua-ml/luainterp.mli # cached
+# Target: lua-ml/luabaselib.cmi, tags: { byte, compile, extension:mli, file:lua-ml/luabaselib.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I lua-ml -I src -o lua-ml/luabaselib.cmi lua-ml/luabaselib.mli # cached
+# Target: lua-ml/luainterp.ml.depends, tags: { extension:ml, file:lua-ml/luainterp.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luainterp.ml > lua-ml/luainterp.ml.depends # cached
+# Target: lua-ml/lualib.ml.depends, tags: { extension:ml, file:lua-ml/lualib.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/lualib.ml > lua-ml/lualib.ml.depends # cached
+# Target: lua-ml/lualib.cmx, tags: { compile, extension:cmx, extension:ml, file:lua-ml/lualib.cmx, file:lua-ml/lualib.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I lua-ml -I src -o lua-ml/lualib.cmx lua-ml/lualib.ml # cached
+# Target: lua-ml/luainterp.cmx, tags: { compile, extension:cmx, extension:ml, file:lua-ml/luainterp.cmx, file:lua-ml/luainterp.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I lua-ml -I src -o lua-ml/luainterp.cmx lua-ml/luainterp.ml # cached
+# Target: lua-ml/luaparser.ml.depends, tags: { extension:ml, file:lua-ml/luaparser.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luaparser.ml > lua-ml/luaparser.ml.depends # cached
+# Target: lua-ml/luaparser.cmx, tags: { compile, extension:cmx, extension:ml, file:lua-ml/luaparser.cmx, file:lua-ml/luaparser.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I lua-ml -I src -o lua-ml/luaparser.cmx lua-ml/luaparser.ml # cached
+# Target: lua-ml/luascanner.mll, tags: { extension:mll, file:lua-ml/luascanner.mll, lexer, ocaml, ocamllex, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamllex.opt -q lua-ml/luascanner.mll # cached
+# Target: lua-ml/luascanner.ml.depends, tags: { extension:ml, file:lua-ml/luascanner.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luascanner.ml > lua-ml/luascanner.ml.depends # cached
+# Target: lua-ml/luascanner.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:lua-ml/luascanner.cmo, file:lua-ml/luascanner.ml, implem, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I lua-ml -I src -o lua-ml/luascanner.cmo lua-ml/luascanner.ml # cached
+# Target: lua-ml/luascanner.cmx, tags: { compile, extension:cmx, extension:ml, file:lua-ml/luascanner.cmx, file:lua-ml/luascanner.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I lua-ml -I src -o lua-ml/luascanner.cmx lua-ml/luascanner.ml # cached
+# Target: lua-ml/luabaselib.cmx, tags: { compile, extension:cmx, extension:ml, file:lua-ml/luabaselib.cmx, file:lua-ml/luabaselib.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I lua-ml -I src -o lua-ml/luabaselib.cmx lua-ml/luabaselib.ml # cached
+# Target: lua-ml/luarun.ml.depends, tags: { extension:ml, file:lua-ml/luarun.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luarun.ml > lua-ml/luarun.ml.depends # cached
+# Target: lua-ml/luarun.mli.depends, tags: { extension:mli, file:lua-ml/luarun.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luarun.mli > lua-ml/luarun.mli.depends # cached
+# Target: lua-ml/luarun.cmi, tags: { byte, compile, extension:mli, file:lua-ml/luarun.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I lua-ml -I src -o lua-ml/luarun.cmi lua-ml/luarun.mli # cached
+# Target: lua-ml/luarun.cmx, tags: { compile, extension:cmx, extension:ml, file:lua-ml/luarun.cmx, file:lua-ml/luarun.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I lua-ml -I src -o lua-ml/luarun.cmx lua-ml/luarun.ml # cached
+# Target: lua-ml/lua.cmx, tags: { compile, extension:cmx, extension:ml, file:lua-ml/lua.cmx, file:lua-ml/lua.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I lua-ml -I src -o lua-ml/lua.cmx lua-ml/lua.ml # cached
+# Target: lua-ml/luacamllib.ml.depends, tags: { extension:ml, file:lua-ml/luacamllib.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luacamllib.ml > lua-ml/luacamllib.ml.depends # cached
+# Target: lua-ml/luacamllib.mli.depends, tags: { extension:mli, file:lua-ml/luacamllib.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luacamllib.mli > lua-ml/luacamllib.mli.depends # cached
+# Target: lua-ml/luaiolib.mli.depends, tags: { extension:mli, file:lua-ml/luaiolib.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luaiolib.mli > lua-ml/luaiolib.mli.depends # cached
+# Target: lua-ml/luaiolib.cmi, tags: { byte, compile, extension:mli, file:lua-ml/luaiolib.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I lua-ml -I src -o lua-ml/luaiolib.cmi lua-ml/luaiolib.mli # cached
+# Target: lua-ml/luacamllib.cmi, tags: { byte, compile, extension:mli, file:lua-ml/luacamllib.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I lua-ml -I src -o lua-ml/luacamllib.cmi lua-ml/luacamllib.mli # cached
+# Target: lua-ml/luaiolib.ml.depends, tags: { extension:ml, file:lua-ml/luaiolib.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luaiolib.ml > lua-ml/luaiolib.ml.depends # cached
+# Target: lua-ml/luaiolib.cmx, tags: { compile, extension:cmx, extension:ml, file:lua-ml/luaiolib.cmx, file:lua-ml/luaiolib.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I lua-ml -I src -o lua-ml/luaiolib.cmx lua-ml/luaiolib.ml # cached
+# Target: lua-ml/luacamllib.cmx, tags: { compile, extension:cmx, extension:ml, file:lua-ml/luacamllib.cmx, file:lua-ml/luacamllib.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I lua-ml -I src -o lua-ml/luacamllib.cmx lua-ml/luacamllib.ml # cached
+# Target: lua-ml/luamathlib.ml.depends, tags: { extension:ml, file:lua-ml/luamathlib.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luamathlib.ml > lua-ml/luamathlib.ml.depends # cached
+# Target: lua-ml/luamathlib.mli.depends, tags: { extension:mli, file:lua-ml/luamathlib.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luamathlib.mli > lua-ml/luamathlib.mli.depends # cached
+# Target: lua-ml/luamathlib.cmi, tags: { byte, compile, extension:mli, file:lua-ml/luamathlib.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I lua-ml -I src -o lua-ml/luamathlib.cmi lua-ml/luamathlib.mli # cached
+# Target: lua-ml/luamathlib.cmx, tags: { compile, extension:cmx, extension:ml, file:lua-ml/luamathlib.cmx, file:lua-ml/luamathlib.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I lua-ml -I src -o lua-ml/luamathlib.cmx lua-ml/luamathlib.ml # cached
+# Target: lua-ml/luastrlib.ml.depends, tags: { extension:ml, file:lua-ml/luastrlib.ml, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luastrlib.ml > lua-ml/luastrlib.ml.depends # cached
+# Target: lua-ml/luastrlib.mli.depends, tags: { extension:mli, file:lua-ml/luastrlib.mli, ocaml, ocamldep, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamldep.opt -modules lua-ml/luastrlib.mli > lua-ml/luastrlib.mli.depends # cached
+# Target: lua-ml/luastrlib.cmi, tags: { byte, compile, extension:mli, file:lua-ml/luastrlib.mli, interf, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlc.opt -c -I lua-ml -I src -o lua-ml/luastrlib.cmi lua-ml/luastrlib.mli # cached
+# Target: lua-ml/luastrlib.cmx, tags: { compile, extension:cmx, extension:ml, file:lua-ml/luastrlib.cmx, file:lua-ml/luastrlib.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I lua-ml -I src -o lua-ml/luastrlib.cmx lua-ml/luastrlib.ml # cached
+# Target: lua-ml/lualink.cmx, tags: { compile, extension:cmx, extension:ml, file:lua-ml/lualink.cmx, file:lua-ml/lualink.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I lua-ml -I src -o lua-ml/lualink.cmx lua-ml/lualink.ml # cached
+# Target: src/main.cmx, tags: { compile, extension:cmx, extension:ml, file:src/main.cmx, file:src/main.ml, implem, native, ocaml, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt -c -I src -I lua-ml -o src/main.cmx src/main.ml
+# Target: src/main.native, tags: { dont_link_with, extension:native, file:src/main.native, link, native, ocaml, program, quiet }
+/usr/local/ocaml/ocaml-4.00.1/bin/ocamlopt.opt unix.cmxa lua-ml/luafloat.cmx lua-ml/luahash.cmx lua-ml/luasrcmap.cmx lua-ml/luavalue.cmx lua-ml/luaast.cmx lua-ml/lualib.cmx lua-ml/luainterp.cmx lua-ml/luaparser.cmx lua-ml/luascanner.cmx lua-ml/luabaselib.cmx lua-ml/luarun.cmx lua-ml/lua.cmx lua-ml/luaiolib.cmx lua-ml/luacamllib.cmx lua-ml/luamathlib.cmx lua-ml/luastrlib.cmx src/cee.cmx src/pretty.cmx src/ppcee.cmx src/prg.cmx src/randinit.cmx src/randomize.cmx src/unique.cmx src/rtype.cmx src/strategy.cmx src/tc.cmx src/util.cmx src/emit.cmx lua-ml/lualink.cmx src/luacode.cmx src/main.cmx -o src/main.native
+# Compilation successful.

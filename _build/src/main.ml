@@ -1,19 +1,5 @@
-%
-% $Id: main.nw 3 2006-04-29 13:17:19Z lindig $
-%
-Filename
-\section{Main}
 
-This is the top-level module of the application. It exports nothing but
-evaluates the command line arguments and gets everything started.
-
-<<main.mli>>=
-val main: unit -> unit     (* is executed automatically *)
-@
-
-\implementation{Implementation}
-
-<<main.ml>>=
+# 17 "main.nw"
 module P  = Pretty
 module PC = Ppcee
 module R  = Rtype
@@ -30,12 +16,8 @@ let sprintf     = Printf.sprintf
 let version     = "$Id: main.nw 3 2006-04-29 13:17:19Z lindig $"
 let (@@) f x    = f x
 
-@
 
-\paragraph{Command Line Options} We export the actual command line and
-options into the Lua table [[CMD]].
-
-<<main.ml>>=
+# 39 "main.nw"
 type eval = 
     | String of string
     | File   of string
@@ -75,15 +57,8 @@ let export_options lua opts =
         ; "argstr",     V.string.V.embed          (String.concat " " argv)  
         ; "cmd",        V.string.V.embed          (List.hd argv)
         ] lua
-@
 
-\paragraph{Command Line Parsing}
-
-Function [[init_prg]] initializes the pseudo-random generator; it uses
-either a user-supplied seed (to aid debugging) or an automatically
-chosen one.
-
-<<main.ml>>=
+# 87 "main.nw"
 let init_prg seed = 
     ( match seed with 
     | None   -> (Random.self_init (); Prg.init (Random.int 12345))
@@ -140,7 +115,8 @@ let eval lua = function
     | String s -> I.dostring lua s
     | File   s -> I.dofile lua s
 
-<<main.ml>>=
+
+# 144 "main.nw"
 let doit opts =
     let ()  = init_prg opts.seed      in
     let lua = I.mk ()                 in
@@ -185,11 +161,6 @@ let main () =
         | []                    -> opts.eval <- exec main::opts.eval; doit opts
         in              
             try parse args with CmdLine msg -> (usage this msg; exit 1)
-@
 
-Everything starts from here.
-
-<<main.ml>>=
+# 193 "main.nw"
 let () = main ()
-@
-
