@@ -24,7 +24,7 @@ clean:	FORCE
 	rm -f url descr
 
 install: all
-	install src/main.native $(BINDIR)/$(NAME)
+	install main.native $(BINDIR)/$(NAME)
 
 remove:	FORCE
 	rm -f $(BINDIR)/$(NAME)
