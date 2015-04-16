@@ -2,7 +2,7 @@
 #
 
 TOP =	    ..
-LP =	    $(TOP)/lipsum/lipsum.native
+LP =	    lipsum
 
 SRC =
 SRC += cee.ml
@@ -35,7 +35,7 @@ SRC += util.ml
 SRC += util.mli
 
 # -- high-level targets
-.PHONY:	    all src clean 
+.PHONY:	    all src clean
 
 all:	    src
 
@@ -58,8 +58,8 @@ quest.man:  $(TOP)/doc/quest.pod
 
 # -- Lua source files. Order is important!
 
-LUACODE	=   
-LUACODE +=  $(TOP)/share/quest.lua	
+LUACODE	=
+LUACODE +=  $(TOP)/share/quest.lua
 LUACODE +=  $(TOP)/share/ansi.lua
 LUACODE +=  $(TOP)/share/cc.lua
 LUACODE +=  $(TOP)/share/gcc.lua

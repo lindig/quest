@@ -4,3 +4,5 @@ _build
 /lua-ml/*.ml*
 /src/quest.man
 tmp
+descr
+url

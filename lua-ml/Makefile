@@ -3,8 +3,8 @@
 #
 
 TOP =		..
-LP =		$(TOP)/lipsum/lipsum.native
-OCY =		ocamlyacc		
+LP =		lipsum
+OCY =		ocamlyacc
 
 SRC =
 SRC += lua.ml
@@ -43,7 +43,7 @@ SRC += luavalue.mli
 
 all:		src
 
-clean: 
+clean:
 		rm -f *.ml *.mli *.mly *.mll
 		rm -rf _build
 
@@ -79,4 +79,4 @@ src:		$(SRC)
 		$(LP) tangle luaparser.mli luasyntax.nw ) > luaparser.mli
 		rm -f luaparsex.mli
 
-		
+
