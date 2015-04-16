@@ -50,7 +50,7 @@ descr:		README.md
 url:		FORCE
 		# echo	"archive: \"$(ZIP)\"" > url
 		# echo	"checksum: \"`curl -L $(ZIP)| md5 -q`\"" >> url
-		echo	'git: "https://github.com/lindig/$(NAME).git"' > url
+		echo	'git: "git://github.com/lindig/quest#opam"' > url
 
 release:	url opam descr sanity
 		test -d "$(OPAM)" || mkdir -p $(OPAM)
