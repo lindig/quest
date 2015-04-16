@@ -1,5 +1,5 @@
 
-Copyright (c) 2004 - 2013 Christian Lindig <lindig@gmail.com>. All
+Copyright (c) 2004 - 2015 Christian Lindig <lindig@gmail.com>. All
 rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,8 +27,4 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
-
-The build process relies on Lipsum in direcotory lipsum which is governed
-by its own license.
-
 
