@@ -76,9 +76,11 @@ by Quest.
 # Installation from Opam (in preperation)
 
 Once Quest is available from [Opam](http://opam.ocaml.org) installation
-easy:
+is easy:
 
     $ opam install quest
+
+This will install the quest binary. 
 
 # Installation from GitHub
 
