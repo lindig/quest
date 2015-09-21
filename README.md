@@ -73,10 +73,10 @@ Directory [bugs](bugs) contains a few compiler bugs that were uncovered
 with Quest in the past. This provides also examples for code generated
 by Quest.
 
-# Installation from Opam (in preperation)
+# Installation from Opam 
 
-Once Quest is available from [Opam](http://opam.ocaml.org) installation
-is easy:
+Quest is available from OCaml's package manager
+[Opam](http://opam.ocaml.org):
 
     $ opam install quest
 
@@ -111,6 +111,13 @@ To be written. See [doc/quest.pod](doc/quest.pod) for now.
 * The Lua 2.5 reference manual in doc/ introduces the Lua scripting
   language. It is only required to define new generators beyond the
   existing ones.
+
+# Discussion
+
+Recently testing calling concentions was discussed in a thread on Hacker
+News:
+
+* [Calling conventions are hard – fuzz them](https://news.ycombinator.com/item?id=10246697)
 
 # Quest Features
 
