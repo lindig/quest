@@ -419,8 +419,8 @@ let testcase (clients,providers,callers) t =
 
 
 let emit_client channel clients =
-    let prog = header 
-            :: errors C.Extern 
+    let prog = (* header 
+            :: *) errors C.Extern 
             :: C.Function(failed)
             :: clients in
     let prog = C.include_headers prog in
@@ -428,8 +428,8 @@ let emit_client channel clients =
         Pretty.to_file channel linewidth doc
 
 let emit_provider channel providers callers =
-    let prog = header
-             :: errors C.Public 
+    let prog = (* header
+             :: *) errors C.Public 
              :: C.Function(failed)
              :: providers 
               @ [C.Function(main callers)] in 
